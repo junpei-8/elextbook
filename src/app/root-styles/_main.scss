@@ -1,0 +1,14 @@
+@use './nav';
+@use '../theme' as ml;
+@use '../media-query' as *;
+
+.rm {
+  position: relative;
+  box-sizing: border-box;
+}
+
+@include pc {
+  .rm {
+    padding-left: nav.$pc-width;
+  }
+}

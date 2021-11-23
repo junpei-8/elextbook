@@ -1,0 +1,111 @@
+@use 'sass:math';
+@use '../theme' as ml;
+@use '../media-query' as *;
+
+$pc-height: 56px;
+
+$mp-height: 80px;
+$mp-view-height: 48px;
+$mp-view-gap: math.div(($mp-height - $mp-view-height), 2);
+
+// NAME: root-header
+.rh {
+  background-color: transparent;
+  height: $mp-height;
+
+  &-view {
+    position: fixed;
+    z-index: 9; // 8
+    @include ml.elevation(8);
+    top: $mp-view-gap;
+    left: 0; right: 0;
+  
+    margin: auto;
+    width: 96%;
+    height: $mp-view-height;
+    border-radius: 8px;
+
+    @include ml.style(background-color, (background, app-bar));
+  }
+
+  &-container {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    
+    width: 100%;
+    height: 100%;
+  }
+
+  // &-suggest {}
+
+  &-icon {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    margin: auto;
+    width: 24px;
+    height: 24px;
+
+    &.people {
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  &-left-actions {
+    margin: 0 8px;
+    z-index: 2;
+  }
+
+  &-content {
+    position: relative;
+    z-index: 0;
+    flex: 1;
+    height: 100%;
+  }
+
+  &-right-actions {
+    margin: 0 8px;
+  }
+
+  &-ripple {
+  }
+}
+
+
+
+@include pc {
+  .rh {
+    height: $pc-height;
+
+    &-view {
+      top: 0;
+      @include ml.elevation(2);
+
+      height: $pc-height;
+      width: 100%;
+      border-radius: 0;
+    }
+    
+    &-icon {
+      width: 32px;
+      height: 32px;
+    }
+
+    &-left-actions {
+      height: $pc-height;
+      width: $pc-height;
+      min-width: 0 !important;
+      margin: 0;
+      border-radius: 0 !important;
+    }
+
+    &-content {
+      margin: 0 8px;
+    }
+
+    &-right-actions {
+    }
+  }
+}
