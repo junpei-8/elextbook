@@ -43,25 +43,25 @@
     {
       "name": "グラフ",
       "short_name": "グラフ",
-      "description": "",
+      "description": "回答した７日間のデータを表したグラフを見て、頑張りを確かめましょう。",
       "url": "/graph"
     },
     {
       "name": "ワークブック",
       "short_name": "ワークブック",
-      "description": "",
+      "description": "様々な問題を解き知識を確実にすることで資格を取得しましょう。",
       "url": "/workbook"
     },
     {
       "name": "ライブラリ",
       "short_name": "ライブラリ",
-      "description": "",
+      "description": "勉強効率を上げる、様々な機能を活用し、資格を取得しましょう。",
       "url": "/library"
     },
     {
       "name": "設定",
       "short_name": "設定",
-      "description": "",
+      "description": "設定を変更し、より効率の良い勉強ができるようにしましょう。",
       "url": "/settings"
     }
   ]
