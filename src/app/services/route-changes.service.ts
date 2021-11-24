@@ -1,45 +1,58 @@
 import { Location } from '@angular/common';
 import { inject, InjectionToken } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, Observable } from 'rxjs';
+import { distinct, distinctUntilChanged, filter, Observable, skip, Subject } from 'rxjs';
 
 export type RouteChanges = Observable<string>;
-// export const ROUTE_CHANGES = new InjectionToken('It Can detects route changes', {
-//   providedIn: 'root',
-//   factory: () => {
-//     const location = inject(Location);
+export const URL_CHANGES = new InjectionToken('It Can detects url changes', {
+  providedIn: 'root',
+  factory: () => inject(Router).events.pipe(
+    filter(event => event instanceof NavigationEnd)
+  )
+});
 
-//     return new Observable(observer => {
-//       location.onUrlChange(() => {
-//         let prevPath: string | undefined;
 
-//         const currPath = location.path();
-//         if (prevPath !== currPath) {
-//           observer.next(currPath);
-//           prevPath = currPath;
-//         }
-//       })
-//     });
-//   }
-// });
 export const ROUTE_CHANGES = new InjectionToken('It Can detects route changes', {
     providedIn: 'root',
     factory: () => {
+      const subject = new Subject();
       const location = inject(Location);
-      const route = inject(Router);
-  
-      // return new Observable(observer => {
-      //   location.onUrlChange(() => {
-      //     let prevPath: string | undefined;
-  
-      //     const currPath = location.path();
-      //     if (prevPath !== currPath) {
-      //       observer.next(currPath);
-      //       prevPath = currPath;
-      //     }
-      //   })
-      // });
-      return route.events.pipe(filter(event => event instanceof NavigationEnd))
+      let prevPath: undefined | string;
+
+      inject(URL_CHANGES).subscribe((event) => {
+        const prev = prevPath;
+        const currPath = location.path();
+
+        if (prev !== currPath) {
+          subject.next(event);
+          prevPath = currPath;
+        }
+
+        console.log('test');
+      });
+
+      return subject.asObservable();
     }
   });
-  
+
+
+// export const ROUTE_CHANGES = new InjectionToken('It Can detects route changes', {
+//     providedIn: 'root',
+//     factory: () => {
+//       const subject = new Subject();
+//       const location = inject(Location);
+
+//       let prevPath: undefined | string;
+
+//       return inject(URL_CHANGES).pipe(
+//         filter(() => {
+//           const currPath = location.path();
+//           if (prevPath !== currPath) {
+//             prevPath = currPath;
+//             return true;
+//           } else { return false; }
+//         })
+//       )
+//     }
+//   });
+    

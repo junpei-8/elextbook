@@ -41,7 +41,7 @@ const routes: Routes = [
     data: {
       key: 'graph',
       title: 'グラフ',
-      desc: 'Elextbook（エレクトブック）で、今までプレイした７日間のデータをグラフで分かりやすく表現します。',
+      desc: 'Elextbook（エレクトブック）で回答した７日間のデータを表したグラフを見て、頑張りを確認しましょう。',
       root: {
         key: 'graph',
         index: 1
@@ -80,7 +80,7 @@ const routes: Routes = [
     data: {
       key: 'library',
       title: 'ライブラリ',
-      desc: 'Elextbook（エレクトブック）を使いやすくするための様々な機能を活用し、資格を取得しましょう。',
+      desc: 'Elextbook（エレクトブック）をより使いやすくなる様々な機能を活用し、資格を取得しましょう。',
       root: {
         key: 'library',
         index: 3

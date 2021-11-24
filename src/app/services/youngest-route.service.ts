@@ -1,36 +1,28 @@
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable, InjectionToken } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { RouteData } from '../app-routing.module';
 import { RouteChanges, ROUTE_CHANGES } from './route-changes.service';
 
-export interface YoungestRouteSnapshot extends ActivatedRouteSnapshot {
-  data: RouteData;
+
+export interface YoungestRoute {
+  ref: ActivatedRoute
 }
+export const YOUNGEST_ROUTE = new InjectionToken('It youngest route', {
+  providedIn: 'root',
+  factory: () => {
+    const entry: YoungestRoute = {} as any;
+    const activatedRoute = inject(ActivatedRoute);
 
-@Injectable({
-  providedIn: 'root'
-})
-export class YoungestRoute {
-  readonly activatedRouteRef: ActivatedRoute;
-  readonly snapshot: YoungestRouteSnapshot;
-
-  constructor(
-    activatedRoute: ActivatedRoute,
-    @Inject(ROUTE_CHANGES) routeChanges: RouteChanges
-  ) {
-    routeChanges.subscribe(() => {
-      console.log(activatedRoute.snapshot, 'test')
+    inject(ROUTE_CHANGES).subscribe(() => {
       let route = activatedRoute;
 
       while (route.firstChild) {
         route = route.firstChild;
       }
 
-      // @ts-ignore
-      this.activatedRouteRef = route;
-
-      // @ts-ignore
-      this.snapshot = route.snapshot;
+      entry.ref = route;
     });
+
+    return entry;
   }
-}
+});
