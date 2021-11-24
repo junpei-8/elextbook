@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, ViewEncapsulation } from '@angular/core';
 import { MediaQuery } from './services/media-query.service';
 
-import { RootRouteNames } from './app-routing.module';
+import { RootRouteNames, RouteData } from './app-routing.module';
 import { RouteChanges, ROUTE_CHANGES } from './services/route-changes.service';
-import { YoungestRoute } from './services/youngest-route.service';
+import { YoungestRoute, YOUNGEST_ROUTE } from './services/youngest-route.service';
 import { Meta } from './services/meta.service';
 
 @Component({
@@ -31,12 +31,11 @@ export class AppComponent {
     changeDetector: ChangeDetectorRef,
     mediaQuery: MediaQuery,
     meta: Meta,
-    youngestRoute: YoungestRoute,
     @Inject(ROUTE_CHANGES) routeChanges: RouteChanges,
+    @Inject(YOUNGEST_ROUTE) youngestRoute: YoungestRoute,
   ) {
     routeChanges.subscribe(() => {
-      const data = youngestRoute.snapshot.data;
-      console.log(data);
+      const data = youngestRoute.ref.snapshot.data as RouteData;
 
       meta.update(data);
       const rootData = data.root;
