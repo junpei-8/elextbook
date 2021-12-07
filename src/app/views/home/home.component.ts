@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, NgZone, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnInit, ViewEncapsulation } from '@angular/core';
 import { RootHeader } from 'src/app/root-header.service';
 import { Fragment } from 'src/app/services/fragment.service';
 import { PWA } from 'src/app/services/pwa.service';
@@ -13,11 +13,14 @@ import { PWA } from 'src/app/services/pwa.service';
 export class HomeComponent implements OnInit, AfterViewInit {
   constructor(
     rootHeader: RootHeader,
+    changeDetectorRef: ChangeDetectorRef,
     public fragment: Fragment,
     public pwa: PWA,
     private _ngZone: NgZone,
   ) {
     rootHeader.setup();
+
+    pwa.addA2HSEventListener(() => changeDetectorRef.markForCheck());
   }
 
   ngOnInit(): void {

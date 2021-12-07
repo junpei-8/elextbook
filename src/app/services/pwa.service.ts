@@ -29,7 +29,6 @@ export class PWA {
       const callback = (event: any) => {
         this.a2hsEvent = event;
         windowRef.removeEventListener('beforeinstallprompt', callback);
-        console.log('onbeforeinstallprompt');
       };
 
       windowRef.addEventListener('beforeinstallprompt', callback);
