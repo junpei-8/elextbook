@@ -1,11 +1,13 @@
+$break-point: 1024px;
+
 @mixin mp {
-  @media screen and (max-width: 1023px) {
+  @media screen and (max-width: ($break-point - 1)) {
     @content;
   }
 }
 
 @mixin pc {
-  @media screen and (min-width: 1024px) {
+  @media screen and (min-width: $break-point) {
     @content;
   }
 }

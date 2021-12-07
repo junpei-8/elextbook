@@ -1,1 +1,96 @@
-.rd {}
+@use './variables' as *;
+@use '../theme' as ml;
+@use '../utils' as *;
+@use '../media-query' as *;
+
+.rd {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 16;
+
+  &-content {
+    position: absolute;
+    z-index: 1;
+    @include ml.elevation(16);
+  
+    width: 80%;
+    max-width: 480px;
+    height: 100%;
+    @include ml.style(background-color, (background, app-bar));
+  
+    transform: translateX(-100%);
+    transition: ml.transition(transform, slow, ease-out);
+  
+    .opening & {
+      transform: translateX(0);
+    }
+  }
+
+  &-overlay {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(black, 0.64);
+  
+    opacity: 0;
+    transition: ml.transition(opacity, slow, ease-out);
+  
+    .opening & {
+      opacity: 1;
+    }
+  }
+}
+
+@include pc {
+  .rd {
+    z-index: 7;
+
+    &-content {
+      width: auto;
+      @include ml.elevation(8);
+    }
+  }
+}
+
+// レスポンシブに関しては、JSで管理するため`media-query`は使用しない
+.rd-mp {
+  &-header {
+    padding: 16px 16px 0;
+  }
+
+  &-divider {
+    display: block;
+    height: 2px;
+    margin: 16px 8px;
+    border-radius: 4px;
+
+    @include ml.style(background-color, (foreground, divider));
+  }
+
+  @include combine('.ml-button') {
+    &-button {
+      display: flex;
+      justify-content: flex-start;
+      width: 100%;
+      padding: 0 24px;
+    }
+  }
+}
+
+.rd-pc {
+  &-button-wrapper {
+    margin-top: $header-pc-height;
+    margin-left: $header-pc-height;
+  }
+
+  @include combine('.ml-button') {
+    &-button {
+      display: flex;
+      height: $header-pc-height;
+      padding: 0 32px;
+      justify-content: flex-start;
+    }
+  }
+}

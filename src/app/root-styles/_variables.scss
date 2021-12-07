@@ -1,0 +1,26 @@
+@use 'sass:math';
+@use '../theme' as ml;
+
+// Header
+$header-pc-height: 56px;
+
+$header-mp-height: 48px;
+$header-mp-gap: 16px;
+
+
+// Nav
+$nav-mp-width: 100%;
+$nav-mp-height: 48px;
+
+$nav-pc-width: $header-pc-height;
+$nav-pc-height: 100%;
+
+
+// Main
+$eb-pc-full-height: calc(100% - $header-pc-height);
+$eb-mp-full-height: calc(100% - ($header-mp-height + $nav-mp-height));
+
+
+// Utility
+$eb-limit-mp-padding: 8px;
+$eb-limit-pc-padding: 16px;

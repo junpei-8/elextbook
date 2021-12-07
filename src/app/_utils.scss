@@ -1,0 +1,6 @@
+@mixin combine($selector) {
+  $prefix: $selector + &;
+  @at-root #{$prefix} {
+    @content;
+  }
+}

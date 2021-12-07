@@ -1,12 +1,8 @@
-@use './header';
+@use './variables' as *;
 @use '../theme' as ml;
+@use '../utils' as *;
 @use '../media-query' as *;
 
-$mp-width: 100%;
-$mp-height: 48px;
-
-$pc-width: header.$pc-height;
-$pc-height: 100%;
 
 .rn {
   position: fixed;
@@ -15,8 +11,8 @@ $pc-height: 100%;
     // top: unset
   left: 0; bottom: 0;
 
-  width: $mp-width;
-  height: $mp-height;
+  width: $nav-mp-width;
+  height: $nav-mp-height;
 
   display: flex;
   align-items: center;
@@ -24,12 +20,24 @@ $pc-height: 100%;
   box-sizing: border-box;
   @include ml.style(background-color, (background, app-bar));
 
-  &-button {
-    width: 100%;
-    min-width: 0 !important;
-    height: 100% !important;
-    border-radius: 0 !important;
-    flex-direction: column !important;
+  transition: ml.transition(transform, fast, ease-in-out);
+
+  @include combine('.ml-button') {
+    &-button {
+      width: 100%;
+      min-width: 0;
+      height: 100%;
+      border-radius: 0;
+      flex-direction: column;
+    }
+
+    &-active-button {
+      @include ml.style((color: [color]), (color, primary, default));
+
+      .rn-icon-accent {
+        fill: currentColor;
+      }
+    }
   }
 
   &-icon {
@@ -38,10 +46,12 @@ $pc-height: 100%;
     flex-shrink: 0;
   }
 
+  &-icon-accent {
+    fill: transparent;
+  }
+
   &-label {
-    display: block;
     font-size: 10px;
-    font-weight: 500;
     line-height: 1;
     margin-top: 2px;
   }
@@ -55,20 +65,24 @@ $pc-height: 100%;
     height: 2px;
     width: 100%;
   }
+
+  &.mobile-hidden {
+    transform: translateY(100%);
+  }
 }
 
 @include pc {
   .rn {
-    padding-top: $pc-width;
-    width: $pc-width;
-    height: $pc-height;
+    padding-top: $nav-pc-width;
+    width: $nav-pc-width;
+    height: $nav-pc-height;
 
     @include ml.elevation(2);
 
     flex-direction: column;
 
     &-button {
-      height: $pc-width !important;
+      height: $nav-pc-width !important;
     }
 
     &-icon {
@@ -87,6 +101,10 @@ $pc-height: 100%;
     &-ink-bar {
       height: 100%;
       width: 2px;
+    }
+
+    &.mobile-hidden {
+      transform: none;
     }
   }
 }

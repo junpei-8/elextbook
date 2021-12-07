@@ -1,0 +1,64 @@
+@use '../media-query' as *;
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  overflow-y: scroll;
+
+  font-family: "Noto Sans JP", "Roboto", Helvetica, Arial, sans-serif;
+
+  // text-size-adjust: 100%;
+  // appearance: none;
+
+  @include mp {
+    font-size: 14px;
+  }
+}
+
+eb-root {
+  display: block;
+  height: 100%;
+}
+
+h1, h2, h3 {
+  margin: 0;
+}
+
+h2 {
+  font-size: 1.6em;
+}
+
+h3 {
+  font-size: 1.4em;
+}
+
+a {
+  text-decoration: none;
+  &:link, &:visited {
+    color: inherit;
+  }
+}
+
+button, a {
+  // user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input {
+  color: inherit;
+  background-color: transparent;
+  line-height: normal;
+  font: inherit;
+  padding: 0;
+  border: none;
+  outline: none;
+  box-shadow: none;
+
+  &::placeholder {
+    font: inherit;
+  }
+}

@@ -1,3 +1,7 @@
+@use './variables' as *;
+@use '../theme' as ml;
+@use '../media-query' as *;
+
 .eb-view {
   display: block;
   width: 100%;
@@ -10,10 +14,172 @@
 }
 
 
-.eb-limit-view {
+.eb-limit {
   width: 100%;
-  max-width: 1024px;
-  // max-width: 960px;
-  margin: auto;
+  max-width: ($break-point + ($eb-limit-pc-padding * 2));
+  margin: 0 auto;
+  padding-left: $eb-limit-mp-padding;
+  padding-right: $eb-limit-mp-padding;
   box-sizing: border-box;
+}
+
+.eb-settings {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 !important;
+
+  &-section {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &-label {
+    @extend .eb-label;
+  }
+
+  &-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    &-title {
+      display: block;
+    }
+
+    &-desc {
+      font-size: 13px;
+      display: block;
+      white-space: initial;
+      @include ml.style(color, (foreground, secondary-text));
+    }
+  }
+
+  .ml-slide-toggle {
+    height: 100%;
+    width: 100%;
+  }
+  .ml-slide-toggle-label {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 8px 16px;
+    box-sizing: border-box;
+  }
+  .ml-slide-toggle-bar {
+    order: 1;
+  }
+
+  .ml-button {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 8px 24px;
+    border-radius: 0;
+  }
+}
+
+.eb-emoticon {
+  text-align: center;
+  display: block;
+  padding: 80px 16px 0;
+  box-sizing: border-box;
+
+  &-title {
+    font-size: 88px;
+    margin-bottom: 16px;
+  }
+  
+  &-comment {
+    font-size: 24px;
+    @include ml.style(color, (foreground, secondary-text));
+  }
+}
+
+.eb-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 8px 16px;
+  @include ml.style(color, (foreground, secondary-text));
+}
+
+.eb-card {
+  box-sizing: border-box;
+  @include ml.elevation(1);
+  border-radius: 4px;
+}
+
+.eb-view-spacer {
+  padding-top: ($header-mp-height + ($header-mp-gap * 2) + 8px);
+  padding-bottom: ($nav-mp-height + 8px);
+}
+
+.eb-zero-padding {
+  padding: 0 !important;
+}
+.eb-zero-margin {
+  margin: 0 !important;
+}
+
+@include pc {
+  .eb-limit {
+    padding-left: $eb-limit-pc-padding;
+    padding-right: $eb-limit-pc-padding;
+  }
+
+  .eb-settings {
+    width: auto;
+  
+    &-label {
+      min-width: 15vw; // <= ５の倍数
+      font-size: 16px;
+      color: inherit;
+    }
+  
+    &-form {
+      flex: 1;
+      width: auto;
+
+      &-desc {
+        font-size: 14px;
+      }
+    }
+
+    .ml-slide-toggle-label {
+      justify-content: flex-start;
+      align-items: baseline;
+    }
+    .ml-slide-toggle-bar {
+      order: 0;
+      margin-right: 24px;
+    }
+
+    .ml-button {
+      padding: 8px 24px;
+    }
+  }
+
+  .eb-emoticon {
+    &-title {
+      font-size: 144px;
+      margin-bottom: 24px;
+    }
+
+    &-comment {
+      font-size: 32px;
+    }
+  }
+
+  .eb-view-spacer {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
 }
