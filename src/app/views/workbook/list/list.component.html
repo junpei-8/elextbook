@@ -11,23 +11,25 @@
 </ng-template>
 
 
-<section *ngFor="let list of lists; trackBy: trackCategory" class="wl-section">
-  <span class="eb-label">{{ list.category }}</span>
-
-  <ng-template ngFor let-data [ngForOf]="list.dataset" [ngForTrackBy]="trackDataId">
-    <a *ngIf="data; else adSense" class="wl-card" aria-label="Go to quiz" [routerLink]="'/workbook-game/' + data.id">
-      <h3 class="wl-card-title">{{ data.title }}</h3>
-      <div class="wl-card-thumbnail">{{ data.shortTitle }}</div>
-      <div class="wl-card-desc">
-        <span>第２種電気工事士の過去問</span>
-        <div class="wl-card-tag-wrapper">
-          <span *ngFor="let tag of data.tags" class="wl-card-tag">{{ data.tags }}</span>
+<ng-template [ngIf]="lists[0]" [ngIfElse]="notMatched">
+  <section *ngFor="let list of lists; trackBy: trackCategory" class="wl-section">
+    <span class="eb-label">{{ list.category }}</span>
+  
+    <ng-template ngFor let-data [ngForOf]="list.dataset" [ngForTrackBy]="trackDataId">
+      <a *ngIf="data; else adSense" class="wl-card" aria-label="Go to quiz" [routerLink]="'/workbook-game/' + data.id">
+        <h3 class="wl-card-title">{{ data.title }}</h3>
+        <div class="wl-card-thumbnail">{{ data.shortTitle }}</div>
+        <div class="wl-card-desc">
+          <span>第２種電気工事士の過去問</span>
+          <div class="wl-card-tag-wrapper">
+            <span *ngFor="let tag of data.tags" class="wl-card-tag">{{ data.tags }}</span>
+          </div>
         </div>
-      </div>
-      <div class="wl-card-overlay"></div>
-    </a>
-  </ng-template>
-</section>
+        <div class="wl-card-overlay"></div>
+      </a>
+    </ng-template>
+  </section>
+</ng-template>
 
 <ng-template #adSense>
   <div class="wl-ad-card">
@@ -35,4 +37,11 @@
     <div class="wl-card-overlay"></div>
     <!-- <ins class="adsbygoogle" style="display:block" data-ad-format="fluid" data-ad-layout-key="-g0+5w+4l-cg+59" data-ad-client="ca-pub-8223938969285051" data-ad-slot="3537654325"></ins> -->
   </div>
+</ng-template>
+
+<ng-template #notMatched>
+  <section>
+    <div class="eb-emoticon-title">(>_<)</div>
+    <div class="eb-emoticon-comment">検索結果がありませんでした。</div>      
+  </section>
 </ng-template>
