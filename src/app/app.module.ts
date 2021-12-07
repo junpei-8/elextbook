@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -8,10 +9,12 @@ import { environment } from '../environments/environment';
 
 import { MlButtonModule } from '@material-lite/angular/button';
 import { MlRippleModule  } from '@material-lite/angular/core';
+import { MlPortalModule } from '@material-lite/angular-cdk/portal';
 import { MlStraightTrackerModule } from '@material-lite/angular-cdk/straight-tracker';
 
 import { NotFoundComponent } from './views/not-found/not-found.component';
 import { HomeComponent } from './views/home/home.component';
+
 
 @NgModule({
   declarations: [
@@ -21,10 +24,13 @@ import { HomeComponent } from './views/home/home.component';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     MlRippleModule,
     MlButtonModule,
+    MlPortalModule,
     MlStraightTrackerModule,
+    // TemplateRefsModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       // Register the ServiceWorker as soon as the app is stable

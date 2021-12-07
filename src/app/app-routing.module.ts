@@ -4,12 +4,13 @@ import { MetaData } from './services/meta.service';
 import { HomeComponent } from './views/home/home.component';
 import { NotFoundComponent } from './views/not-found/not-found.component';
 
+export type RootRouteNames = 'home' | 'graph' | 'workbook' | 'library' | 'settings' | 'sign-in' | 'sing-up';
 
 export interface RouteData extends MetaData {
   key: string;
 
   root?: {
-    key: string;
+    key: RootRouteNames;
     index?: number;
   }
 }
@@ -18,8 +19,6 @@ export interface Route extends BaseRoute {
   data?: RouteData;
 }
 export type Routes = Route[];
-
-export type RootRouteNames = 'home' | 'graph' | 'workbook' | 'library' | 'settings' | 'sign-in' | 'sing-up';
 
 const routes: Routes = [
   {

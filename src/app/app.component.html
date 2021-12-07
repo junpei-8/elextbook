@@ -1,44 +1,43 @@
 <!-- NAME: Root header ... rh -->
-<header class="rh" #rootHeaderRef>
-  <div class="rh-view">
-    <div class="rh-container">
-      <button class="rh-left-actions rh-button" mlButton [variant]="mediaQueryState.headerLeftButtonVariant">
-        <svg class="rh-icon" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" /></svg>
-        <!-- <svg class="rh-icon" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3 12.59L17.59 17 14 13.41 10.41 17 9 15.59 12.59 12 9 8.41 10.41 7 14 10.59 17.59 7 19 8.41 15.41 12 19 15.59z"/></svg> -->
-      </button>
+<header id="rh">
+  <div class="rh-container">
+    <button class="rh-left-actions rh-button" mlButton [variant]="mediaQueryState.headerLeftButtonVariant" hoverAction="enabled" aria-label="Left actions" (click)="rootHeader.onClickLeftActions()">
+      <svg xmlns="http://www.w3.org/2000/svg" id="rh-left-actions-svg" class="rh-icon" viewBox="0 0 24 24" role="img" aria-hidden="true"></svg>
+    </button>
 
-      <div class="rh-content">
-        <ng-template></ng-template>
-      </div>
-
-      <div class="rh-sub-actions-wrapper" *ngIf="mediaQueryState.isPC">
-        <button class="rh-button" mlButton variant="icon" hoverAction="enabled">
-          <svg class="rh-icon" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" height="24px" viewBox="0 0 24 24" width="24px"><g><path d="M0,0h24v24H0V0z" fill="none"/></g><g><path d="M12,4.81L12,19c-3.31,0-6-2.63-6-5.87c0-1.56,0.62-3.03,1.75-4.14L12,4.81 M6.35,7.56L6.35,7.56C4.9,8.99,4,10.96,4,13.13 C4,17.48,7.58,21,12,21c4.42,0,8-3.52,8-7.87c0-2.17-0.9-4.14-2.35-5.57l0,0L12,2L6.35,7.56z"/></g></svg>
-        </button>
-      </div>
-
-      <!-- right-actions-button (クラス名では省略) -->
-      <button class="rh-button" mlButton variant="icon" hoverAction="enabled">
-        <svg class="rh-icon rh-people-icon" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM7.07 18.28c.43-.9 3.05-1.78 4.93-1.78s4.51.88 4.93 1.78C15.57 19.36 13.86 20 12 20s-3.57-.64-4.93-1.72zm11.29-1.45c-1.43-1.74-4.9-2.33-6.36-2.33s-4.93.59-6.36 2.33C4.62 15.49 4 13.82 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8c0 1.82-.62 3.49-1.64 4.83zM12 6c-1.94 0-3.5 1.56-3.5 3.5S10.06 13 12 13s3.5-1.56 3.5-3.5S13.94 6 12 6zm0 5c-.83 0-1.5-.67-1.5-1.5S11.17 8 12 8s1.5.67 1.5 1.5S12.83 11 12 11z"/></svg>
-      </button>
-
-      <div class="rh-ripple" *ngIf="!mediaQueryState.isPC" mlRipple></div>
+    <div class="rh-content">
+      <ng-template [mlPortal]="rootHeader.content" [mlPortalConfig]="headerPortalConfig"></ng-template>
     </div>
 
-    <!-- TODO: Develop suggest system -->
-    <div class="rh-suggest"></div>
+    <div class="rh-sub-actions-wrapper" *ngIf="mediaQueryState.isPC">
+      <button class="rh-button" mlButton variant="icon" hoverAction="enabled" aria-label="Toggle theme" (click)="toggleDarkTheme()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="rh-icon" viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M12,4.81L12,19c-3.31,0-6-2.63-6-5.87c0-1.56,0.62-3.03,1.75-4.14L12,4.81 M6.35,7.56L6.35,7.56C4.9,8.99,4,10.96,4,13.13 C4,17.48,7.58,21,12,21c4.42,0,8-3.52,8-7.87c0-2.17-0.9-4.14-2.35-5.57l0,0L12,2L6.35,7.56z"/></svg>
+      </button>
+    </div>
+
+    <button class="rh-right-actions rh-button" mlButton variant="icon" hoverAction="enabled" aria-label="Right actions" (click)="rootHeader.onClickRightActions()">
+      <svg xmlns="http://www.w3.org/2000/svg" id="rh-right-actions-svg" class="rh-icon" viewBox="0 0 24 24" role="img" aria-hidden="true"></svg>
+    </button>
+
+    <div class="rh-mobile-actions" *ngIf="!mediaQueryState.isPC" mlRipple (click)="rootHeader.onClickMobileActions()" role="button" aria-label="Mobile actions"></div>
   </div>
 </header>
 
+<ng-template #rhDefaultContent>
+  <div class="rh-title-wrapper">
+    <svg xmlns="http://www.w3.org/2000/svg" class="rh-title" viewBox="0 0 288 48" fill="currentColor" role="img" aria-label="エレクトブック Elextbook"><path d="m265.61 47.367h-8.54v-47.367h8.54v29.869l12.639-16.327h9.7511l-11.024 14.112 11.024 19.713h-9.7511l-6.7388-12.308-5.9004 7.9736zm-13.229-17.245q0 3.797-1.3353 7.0877-1.3353 3.2591-3.6334 5.6638-2.298 2.3731-5.4035 3.7653-3.0744 1.3606-6.6146 1.3606-3.5092 0-6.6146-1.3606-3.0744-1.3922-5.4035-3.7653-2.298-2.4047-3.6334-5.6638-1.3353-3.2907-1.3353-7.0877 0-3.8602 1.3353-7.1509 1.3354-3.2907 3.6334-5.6638 2.3291-2.4047 5.4035-3.7653 3.1054-1.3606 6.6146-1.3606 3.5402 0 6.6146 1.2973 3.1055 1.2657 5.4035 3.6388 2.298 2.3415 3.6334 5.6638 1.3353 3.2907 1.3353 7.3408zm-8.54 0q0-2.0883-0.6832-3.7653-0.65214-1.7086-1.8012-2.911-1.149-1.234-2.7017-1.8668-1.5217-0.66447-3.2607-0.66447-1.739 0-3.2918 0.66447-1.5217 0.63283-2.6707 1.8668-1.118 1.2024-1.7701 2.911-0.65215 1.677-0.65215 3.7653 0 1.9618 0.65215 3.6388 0.65215 1.677 1.7701 2.911 1.149 1.234 2.6707 1.9618 1.5527 0.69612 3.2918 0.69612 1.7391 0 3.2607-0.66447 1.5527-0.66447 2.7017-1.8668 1.149-1.2024 1.8012-2.911 0.6832-1.7086 0.6832-3.7653zm-28.291 0q0 3.797-1.3353 7.0877-1.3353 3.2591-3.6334 5.6638-2.298 2.3731-5.4035 3.7653-3.0744 1.3606-6.6146 1.3606-3.5092 0-6.6146-1.3606-3.0744-1.3922-5.4035-3.7653-2.298-2.4047-3.6334-5.6638-1.3354-3.2907-1.3354-7.0877 0-3.8602 1.3354-7.1509 1.3353-3.2907 3.6334-5.6638 2.3291-2.4047 5.4035-3.7653 3.1055-1.3606 6.6146-1.3606 3.5402 0 6.6146 1.2973 3.1054 1.2657 5.4035 3.6388 2.298 2.3415 3.6334 5.6638 1.3353 3.2907 1.3353 7.3408zm-8.54 0q0-2.0883-0.68319-3.7653-0.65215-1.7086-1.8012-2.911-1.149-1.234-2.7018-1.8668-1.5217-0.66447-3.2607-0.66447-1.7391 0-3.2918 0.66447-1.5217 0.63283-2.6707 1.8668-1.118 1.2024-1.7701 2.911-0.65214 1.677-0.65214 3.7653 0 1.9618 0.65214 3.6388 0.65215 1.677 1.7701 2.911 1.149 1.234 2.6707 1.9618 1.5527 0.69612 3.2918 0.69612 1.739 0 3.2607-0.66447 1.5527-0.66447 2.7018-1.8668 1.149-1.2024 1.8012-2.911 0.68319-1.7086 0.68319-3.7653zm-28.291 0q0 3.9868-1.3353 7.2775-1.3354 3.2907-3.6334 5.6638-2.298 2.3415-5.4035 3.6388-3.0744 1.2973-6.6146 1.2973-3.5092 0-6.6146-1.3289-3.0744-1.3289-5.4035-3.702-2.298-2.3731-3.6334-5.6322-1.3353-3.2907-1.3353-7.2142v-30.123h8.5089v15.821q0.68321-0.88596 1.6459-1.5821 0.99375-0.69611 2.1117-1.1391 1.149-0.44298 2.3601-0.66447 1.2111-0.25313 2.3602-0.25313 3.5402 0 6.6146 1.3606 3.1055 1.3289 5.4035 3.7337 2.298 2.4047 3.6334 5.6954 1.3353 3.2591 1.3353 7.1509zm-8.54 0q0-1.9618-0.6832-3.6388-0.65214-1.7086-1.8012-2.9426-1.149-1.234-2.7018-1.9301-1.5217-0.69611-3.2607-0.69611-1.7391 0-3.2918 0.79103-1.5217 0.75939-2.6707 2.0567-1.149 1.2657-1.8012 2.9426-0.65214 1.6454-0.65214 3.4173 0 1.9618 0.65214 3.6388 0.65214 1.677 1.8012 2.911 1.149 1.234 2.6707 1.9618 1.5527 0.69612 3.2918 0.69612 1.739 0 3.2607-0.69612 1.5527-0.72775 2.7018-1.9618 1.149-1.234 1.8012-2.911 0.6832-1.677 0.6832-3.6388zm-35.93 17.245q-3.0744 0-5.7762-1.1707-2.7018-1.2024-4.7514-3.2591-2.0185-2.0883-3.1986-4.8411-1.149-2.7528-1.149-5.8853v-10.062h-4.1302v-8.6064h4.1302v-13.543h8.4468v13.543h12.857v8.6064h-12.857v10.062q0 1.3606 0.49688 2.563 0.49686 1.1707 1.3664 2.0567 0.86952 0.88595 2.0496 1.4239 1.1801 0.50627 2.5154 0.50627h6.4283v8.6064zm-19.689 0h-10.372l-6.6146-10.378-6.6767 10.378h-10.372l12.142-17.371-12.142-16.707h10.372l6.6767 9.7139 6.6146-9.7139h10.372l-12.173 16.707zm-50.464-8.29q0.49687 0.15821 0.99374 0.22149 0.49687 0.03169 0.99374 0.03169 1.2422 0 2.3912-0.34806 1.149-0.34805 2.1428-0.98088 1.0248-0.66447 1.8012-1.5821 0.80742-0.94924 1.3043-2.0883l6.2109 6.3599q-1.1801 1.7086-2.7328 3.0692-1.5217 1.3606-3.3228 2.3098-1.7701 0.94923-3.7576 1.4239-1.9564 0.50627-4.0371 0.50627-3.5092 0-6.6146-1.3289-3.0744-1.3289-5.4035-3.702-2.298-2.3731-3.6334-5.6322-1.3353-3.2907-1.3353-7.2142 0-4.0185 1.3353-7.3408 1.3353-3.3223 3.6334-5.6638 2.3291-2.3415 5.4035-3.6388 3.1054-1.2973 6.6146-1.2973 2.0807 0 4.0681 0.50626 1.9875 0.50626 3.7576 1.4555 1.8012 0.94924 3.3539 2.3415 1.5527 1.3606 2.7328 3.0692zm4.3476-17.814q-0.59004-0.22149-1.1801-0.28477-0.55898-0.06328-1.1801-0.06328-1.7391 0-3.2918 0.66447-1.5217 0.63283-2.6707 1.8352-1.118 1.2024-1.7701 2.911-0.65215 1.677-0.65215 3.797 0 0.47462 0.03111 1.0758 0.06212 0.60119 0.15527 1.234 0.12422 0.60119 0.27949 1.1707 0.15527 0.56955 0.40371 1.0125zm-24.036 26.104h-8.54v-47.367h8.54zm-13.881 0h-30.527v-45.374h30.527v9.0811h-21.614v9.0811h14.627v9.0811h-14.627v9.0494h21.614z"/></svg>
+  </div>
+</ng-template>
+
 
 <!-- NAME: Root main ... rm -->
-<main class="rm">
+<main class="rm" [@rootRouteAnimations]="selectedRouteKey">
   <router-outlet></router-outlet>
 </main>
 
 
 <!-- NAME: Root nav ... rn -->
-<nav class="rn">
+<nav class="rn" [class.mobile-hidden]="rootView.mobileNavHasHidden">
   <ml-straight-tracker
     class="rn-straight-tracker"
     [targetIndex]="selectedRouteIndex"
@@ -48,33 +47,72 @@
     <div class="rn-ink-bar ml-primary-background"></div>
   </ml-straight-tracker>
 
-  <a class="rn-button" mlButton [theme]="selectedRoute.home" routerLink="/home" aria-label="Elextbook エレクトブック">
-    <svg class="rn-icon" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg>
+  <a class="rn-button" mlButton [class.rn-active-button]="selectedRoute.home" routerLink="/home" aria-label="Home page link">
+    <svg xmlns="http://www.w3.org/2000/svg" class="rn-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+      <path class="rn-icon-accent" d="m6 9.96v8.88h4v-5.84h4v5.84h4v-8.88l-6-5.12z"/>
+      <path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm5 15h-2v-6H9v6H7v-7.81l5-4.5 5 4.5V18z"/>
+    </svg>
     <span class="rn-label">Home</span>
   </a>
 
-  <a class="rn-button" mlButton [theme]="selectedRoute.graph" routerLink="/graph">
-    <svg class="rn-icon" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><rect fill="none" height="24" width="24"/></g><g><g><path d="M21,8c-1.45,0-2.26,1.44-1.93,2.51l-3.55,3.56c-0.3-0.09-0.74-0.09-1.04,0l-2.55-2.55C12.27,10.45,11.46,9,10,9 c-1.45,0-2.27,1.44-1.93,2.52l-4.56,4.55C2.44,15.74,1,16.55,1,18c0,1.1,0.9,2,2,2c1.45,0,2.26-1.44,1.93-2.51l4.55-4.56 c0.3,0.09,0.74,0.09,1.04,0l2.55,2.55C12.73,16.55,13.54,18,15,18c1.45,0,2.27-1.44,1.93-2.52l3.56-3.55 C21.56,12.26,23,11.45,23,10C23,8.9,22.1,8,21,8z"/><polygon points="15,9 15.94,6.93 18,6 15.94,5.07 15,3 14.08,5.07 12,6 14.08,6.93"/><polygon points="3.5,11 4,9 6,8.5 4,8 3.5,6 3,8 1,8.5 3,9"/></g></g></svg>
+  <a class="rn-button" mlButton [class.rn-active-button]="selectedRoute.graph" routerLink="/graph" aria-label="Graph page link">
+    <svg xmlns="http://www.w3.org/2000/svg" class="rn-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+      <path class="rn-icon-accent" d="m9 4v6h-6v10h6 6 6v-8h-6v-8h-6z"/>
+      <path d="M16,11V3H8v6H2v12h20V11H16z M10,5h4v14h-4V5z M4,11h4v8H4V11z M20,19h-4v-6h4V19z"/>
+    </svg>
     <span class="rn-label">Graph</span>
   </a>
 
-  <a class="rn-button" mlButton [theme]="selectedRoute.workbook" routerLink="/workbook-list">
-    <svg class="rn-icon" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/> </svg>
+  <a class="rn-button" mlButton [class.rn-active-button]="selectedRoute.workbook" routerLink="/workbook-list" aria-label="Workbook page link">
+    <svg xmlns="http://www.w3.org/2000/svg" class="rn-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+      <path class="rn-icon-accent" d="m12 6.5c1.37-0.58 4.16-1 5.5-1 1.2 0 3.4 0.15 4.5 0.5v13.5c-1.1-0.35-3.3-0.5-4.5-0.5-1.34 0-4.13 0.42-5.5 1zm0 0c-1.37-0.58-4.16-1-5.5-1-1.2 0-3.4 0.15-4.5 0.5v13.5c1.1-0.35 3.3-0.5 4.5-0.5 1.34 0 4.13 0.42 5.5 1z"/>
+      <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zM3 18.5V7c1.1-.35 2.3-.5 3.5-.5 1.34 0 3.13.41 4.5.99v11.5C9.63 18.41 7.84 18 6.5 18c-1.2 0-2.4.15-3.5.5zm18 0c-1.1-.35-2.3-.5-3.5-.5-1.34 0-3.13.41-4.5.99V7.49c1.37-.59 3.16-.99 4.5-.99 1.2 0 2.4.15 3.5.5v11.5z"/></svg>
     <span class="rn-label">Workbook</span>
   </a>
 
-  <a class="rn-button" mlButton [theme]="selectedRoute.library" routerLink="/library">
-    <svg class="rn-icon" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M0 0h24v24H0z" fill="none"/> <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/> </svg>
+  <a class="rn-button" mlButton [class.rn-active-button]="selectedRoute.library" routerLink="/library" aria-label="Library page link">
+    <svg xmlns="http://www.w3.org/2000/svg" class="rn-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+      <path class="rn-icon-accent" d="m11 7-2.36-2h-5.64v14h18v-12zm7.98 9v1h-8v-1c0-1.33 2.67-2 4-2s4 0.67 4 2zm-4-7c1.1 0 2 0.9 2 2s-0.9 2-2 2-2-0.9-2-2 0.9-2 2-2z"/>
+      <path d="m20 6h-8l-2-2h-6c-1.1 0-1.99 0.9-1.99 2l-0.01 12c0 1.1 0.9 2 2 2h16c1.1 0 2-0.9 2-2v-10c0-1.1-0.9-2-2-2zm0 12h-16v-12h5.17l2 2h8.83z"/>
+    </svg>
     <span class="rn-label">Library</span>
   </a>
 
-  <a class="rn-button" mlButton [theme]="selectedRoute.settings" routerLink="/settings">
-    <svg class="rn-icon"  role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path d="M0,0h24v24H0V0z" fill="none"/> <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/> </g> </svg>
+  <a class="rn-button" mlButton [class.rn-active-button]="selectedRoute.settings" routerLink="/settings" aria-label="Settings page link">
+    <svg xmlns="http://www.w3.org/2000/svg" class="rn-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+      <path class="rn-icon-accent" d="m20.2 8.18-0.788-1.36-2.62 1.06-1.02-0.788c-0.439-0.338-0.9-0.608-1.38-0.799l-1.19-0.484-0.18-1.27-0.214-1.53h-1.58l-0.214 1.52-0.18 1.27-1.19 0.495c-0.461 0.191-0.922 0.461-1.41 0.821l-1.01 0.765-1.18-0.472-1.43-0.585-0.788 1.36 1.22 0.945 1 0.788-0.158 1.27c-0.0338 0.338-0.0562 0.596-0.0562 0.821s0.0225 0.484 0.0562 0.821l0.158 1.27-1 0.788-1.22 0.945 0.788 1.36 2.62-1.06 1.02 0.788c0.439 0.338 0.9 0.608 1.38 0.799l1.19 0.484 0.18 1.27 0.214 1.53h1.56l0.214-1.52 0.18-1.27 1.19-0.484c0.461-0.191 0.922-0.461 1.41-0.821l1.01-0.765 2.6 1.05 0.788-1.36-1.22-0.945-1-0.788 0.158-1.27c0.045-0.349 0.0562-0.585 0.0562-0.821s-0.0225-0.484-0.0562-0.821l-0.158-1.27 1-0.788zm-8.19 6.82c-2.49 0-3-0.514-3-3s0.514-3 3-3 3 0.514 3 3-0.514 3-3 3z"/>
+      <path d="M19.43 12.98c.04-.32.07-.64.07-.98 0-.34-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.09-.16-.26-.25-.44-.25-.06 0-.12.01-.17.03l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.06-.02-.12-.03-.18-.03-.17 0-.34.09-.43.25l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.09.16.26.25.44.25.06 0 .12-.01.17-.03l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.06.02.12.03.18.03.17 0 .34-.09.43-.25l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zm-1.98-1.71c.04.31.05.52.05.73 0 .21-.02.43-.05.73l-.14 1.13.89.7 1.08.84-.7 1.21-1.27-.51-1.04-.42-.9.68c-.43.32-.84.56-1.25.73l-1.06.43-.16 1.13-.2 1.35h-1.4l-.19-1.35-.16-1.13-1.06-.43c-.43-.18-.83-.41-1.23-.71l-.91-.7-1.06.43-1.27.51-.7-1.21 1.08-.84.89-.7-.14-1.13c-.03-.31-.05-.54-.05-.74s.02-.43.05-.73l.14-1.13-.89-.7-1.08-.84.7-1.21 1.27.51 1.04.42.9-.68c.43-.32.84-.56 1.25-.73l1.06-.43.16-1.13.2-1.35h1.39l.19 1.35.16 1.13 1.06.43c.43.18.83.41 1.23.71l.91.7 1.06-.43 1.27-.51.7 1.21-1.07.85-.89.7.14 1.13zM12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
     <span class="rn-label">Settings</span>
   </a>
 </nav>
 
 
 <!-- NAME: Root drawer ... rn -->
-<aside class="rd">
+<aside class="rd" *ngIf="rootDrawer.exists" #rdRef>
+  <div class="rd-content">
+    <ng-container *ngIf="mediaQueryState.isPC; then pcDrawer; else mpDrawer"></ng-container>
+
+    <ng-template #pcDrawer>
+      <div class="rd-pc-button-wrapper">
+        <a class="rd-pc-button" mlButton routerLink="/home" [theme]="selectedRoute.home" aria-label="Home page link">Home</a>
+        <a class="rd-pc-button" mlButton routerLink="/graph" [theme]="selectedRoute.graph" aria-label="Graph page link">Graph</a>
+        <a class="rd-pc-button" mlButton routerLink="/workbook-list" [theme]="selectedRoute.workbook" aria-label="Workbook page link">Workbook</a>
+        <a class="rd-pc-button" mlButton routerLink="/library" [theme]="selectedRoute.library" aria-label="Library page link">Library</a>
+        <a class="rd-pc-button" mlButton routerLink="/settings" [theme]="selectedRoute.settings" aria-label="Settings page link">Settings</a>
+      </div>
+    </ng-template>
+
+    <ng-template #mpDrawer>
+      <header class="rd-mp-header">
+        <h1>Elextbook</h1>
+      </header>
+        <span class="rd-mp-divider"></span>
+      <section>
+        <h3 class="eb-label">Settings</h3>
+        <button mlButton class="rd-mp-button" aria-label="Toggle theme" (click)="toggleDarkTheme()">Toggle theme</button>
+      </section>
+    </ng-template>
+  </div>
+  
+  <div class="rd-overlay" (click)="rootDrawer.close()"></div>
 </aside>
