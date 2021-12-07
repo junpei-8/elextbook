@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "prod-build": "ng build --aot --optimization --configuration=production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -19,9 +20,11 @@
     "@angular/platform-browser-dynamic": "~13.0.0",
     "@angular/router": "~13.0.0",
     "@angular/service-worker": "~13.0.0",
-    "@material-lite/angular": "^2.5.0",
+    "@material-lite/angular": "^2.5.1",
     "@material-lite/angular-cdk": "^2.5.0",
     "@material-lite/theming": "^2.5.2",
+    "chart.js": "^3.6.1",
+    "firebase": "^9.5.0",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
