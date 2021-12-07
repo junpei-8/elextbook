@@ -1,7 +1,6 @@
-import { inject, Injectable, InjectionToken } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { RouteData } from '../app-routing.module';
-import { RouteChanges, ROUTE_CHANGES } from './route-changes.service';
+import { inject, InjectionToken } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { ROUTE_CHANGES } from './route-changes.service';
 
 
 export interface YoungestRoute {
