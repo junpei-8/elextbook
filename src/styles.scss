@@ -1,6 +1,7 @@
 @use './app/media-query' as *;
 @use './app/theme' as ml;
 
+@use './app/root-styles/tag';
 @use './app/root-styles/header';
 @use './app/root-styles/main';
 @use './app/root-styles/nav';
@@ -8,34 +9,6 @@
 @use './app/root-styles/utility-class';
 
 @use './app/views/home/home.component';
-@use './app/views/not-found/not-found.component';
 
 @include ml.core();
 @include ml.themes();
-
-html {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  height: 100%;
-  overflow-y: scroll;
-
-  font-family: "Noto Sans JP", "Roboto", Helvetica, Arial, sans-serif;
-
-  text-size-adjust: none;
-  appearance: none;
-
-  @include mp {
-    font-size: 14px;
-  }
-}
-
-svg {
-  fill: currentColor;
-}
-
-app-root {
-  display: block;
-}
