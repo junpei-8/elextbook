@@ -5,7 +5,7 @@
   "background_color": "#9C27B0",
   "display": "standalone",
   "scope": "./",
-  "start_url": "./",
+  "start_url": "./index.html",
   "icons": [
     {
       "src": "assets/favicons/favicon-64x64.png",
@@ -44,25 +44,41 @@
       "name": "グラフ",
       "short_name": "グラフ",
       "description": "回答した７日間のデータを表したグラフを見て、頑張りを確かめましょう。",
-      "url": "/graph"
+      "url": "/graph",
+      "icons": [{
+        "src": "assets/images/icons/graph-192x192.png",
+        "sizes": "192x192"
+      }]
     },
     {
       "name": "ワークブック",
       "short_name": "ワークブック",
       "description": "様々な問題を解き知識を確実にすることで資格を取得しましょう。",
-      "url": "/workbook"
+      "url": "/workbook",
+      "icons": [{
+        "src": "assets/images/icons/workbook-192x192.png",
+        "sizes": "192x192"
+      }]
     },
     {
       "name": "ライブラリ",
       "short_name": "ライブラリ",
       "description": "勉強効率を上げる、様々な機能を活用し、資格を取得しましょう。",
-      "url": "/library"
+      "url": "/library",
+      "icons": [{
+        "src": "assets/images/icons/library-192x192.png",
+        "sizes": "192x192"
+      }]
     },
     {
       "name": "設定",
       "short_name": "設定",
       "description": "設定を変更し、より効率の良い勉強ができるようにしましょう。",
-      "url": "/settings"
+      "url": "/settings",
+      "icons": [{
+        "src": "assets/images/icons/settings-192x192.png",
+        "sizes": "192x192"
+      }]
     }
   ]
 }
