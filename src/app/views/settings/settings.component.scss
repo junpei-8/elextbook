@@ -1,0 +1,15 @@
+@use 'src/app/theme' as ml;
+@use 'src/app/media-query' as *;
+@use 'src/app/root-styles/variables' as root;
+
+.st {
+  display: flex;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@include pc {
+  .st {
+    padding: 40px root.$eb-limit-pc-padding 0;
+  }
+}

@@ -1,1 +1,26 @@
-<p>settings works!</p>
+<div class="eb-settings">
+  <section class="eb-settings-section">
+    <span class="eb-settings-label">テーマ</span>
+    <div class="eb-settings-form">
+      <ml-slide-toggle theme="accent">
+        <span class="eb-settings-form-title">ダークテーマの使用</span>
+      </ml-slide-toggle>
+    </div>
+  </section>
+
+  <section class="eb-settings-section">
+    <span class="eb-settings-label">ユーザー</span>
+    <div class="eb-settings-form">
+      <ng-template [ngIf]="true" [ngIfElse]="logout">
+        <button mlButton routerLink="/sign-in">ログイン</button>
+      </ng-template>
+
+      <ng-template #logout>
+        <button mlButton>アカウント情報</button>
+        <button mlButton>ログアウト</button>
+      </ng-template>
+
+      <button mlButton routerLink="/sign-up">アカウントの作成</button>
+    </div>
+  </section>
+</div>

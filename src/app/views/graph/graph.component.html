@@ -1,1 +1,22 @@
-<p>graph works!</p>
+<section class="gp-card eb-card">
+  <div class="gp-actions-wrapper">
+    <ng-template ngFor [ngForOf]="actionsList" let-button [ngForTrackBy]="trackActions">
+      <button
+        class="gp-actions" mlButton variant="flat" hoverAction="enabled"
+        [attr.aria-label]="button.label"
+        [theme]="selectedChartKey === button.key ? button.theme : ''"
+        (click)="selectChart(button.key)"
+      >
+        <span class="gp-actions-label">{{ button.label }}</span>
+        <div *ngIf="selectedChartKey === button.key && selectedChartPointData" class="action-button-data">
+          <span>{{ selectedChartPointData!.date }}</span>
+          <span>{{ selectedChartPointData!.value }}</span>
+        </div>
+      </button>
+    </ng-template>
+  </div>
+
+  <div class="gp-chart-wrapper">
+    <canvas #chartRef class="gp-chart"></canvas>
+  </div>
+</section>

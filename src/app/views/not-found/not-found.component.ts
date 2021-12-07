@@ -1,17 +1,17 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { RootHeader } from 'src/app/root-header.service';
 
 @Component({
-  selector: 'app-not-found',
+  selector: 'eb-not-found',
   templateUrl: './not-found.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'eb-view' }
+  host: { class: 'eb-view eb-emoticon' }
 })
-export class NotFoundComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
+export class NotFoundComponent {
+  constructor(
+    rootHeader: RootHeader
+  ) {
+    rootHeader.setup();
   }
-
 }

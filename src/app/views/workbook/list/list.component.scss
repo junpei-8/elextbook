@@ -1,7 +1,206 @@
-// NAME: workbook-list => wl
+@use 'sass:color';
+@use 'src/app/theme' as ml;
+@use 'src/app/utils' as *;
+@use 'src/app/media-query' as *;
 
+// NAME: workbook-list => wl
 .wl {
+  max-width: 1240px;
+  margin: 0 auto;
+
+  // TODO: scroll-position の効果がどのくらい、どこに指定すれば有効なのかを検証したい
+  // will-change: scroll-position;
+
+  .eb-label:empty {
+    display: none;
+  }
+
   &-section {
     content-visibility: auto;
+    box-sizing: border-box;
+    padding-bottom: 40px;
+  }
+
+  &-ad-card, &-card {
+    position: relative;
+    width: 100%;
+    padding: 16px 24px;
+    box-sizing: border-box;
+    user-select: none;
+    @include ml.style((border-bottom: [color] 1px solid), (foreground, divider));
+  }
+
+  &-card {
+    display: inline-flex;
+    flex-wrap: wrap;
+
+    &-title {
+      width: 100%;
+      flex-shrink: 0;
+      font-size: 18px;
+      font-weight: 500;
+      color: #039BE5;
+      margin-bottom: 16px;
+  
+      .downloaded & {
+        @include ml.style((color: [color]), (color, accent, default));
+      }
+    }
+  
+    &-thumbnail {
+      display: inline-flex;
+      width: 80px;
+      height: 80px;
+      margin-right: 16px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 18px;
+      text-align: center;
+      align-items: center;
+  
+      background-color: pink;
+    }
+  
+    &-desc {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      @include ml.style(color, (foreground, secondary-text));
+    }
+    &-tag-wrapper {
+      margin-left: auto;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar { display:none; }
+    }
+    &-tag {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 4px 8px;
+      border-radius: 16px;
+  
+      font-size: 12px;
+      white-space: nowrap;
+      @include ml.style(background-color, (background, status-bar));
+    }
+
+    &:hover  &-overlay, .wl-ad-card:hover &-overlay  { opacity: .04; }
+    &:active &-overlay, .wl-ad-card:active &-overlay { opacity: .06; }
+    &-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      transition: ml.transition(opacity, fast, ease-out);
+      opacity: 0;
+      @include ml.style-zone(foreground, base) using ($color) {
+        background: color.invert($color);
+      };
+    }
+  }
+}
+
+.wl-search {
+  &-box {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &-input {
+    width: 100%;
+    height: 100%;
+    font-weight: 400;
+
+    &::placeholder {
+      font-size: 16px;
+      font-weight: 500;
+    }
+  }
+
+  @include combine('.ml-button') {
+    &-submit-button {
+      // Display PC only
+      display: none; 
+      @include ml.style(background-color, (background, status-bar));
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
+      height: 32px;
+      min-width: 0;
+      min-height: 0;
+      padding: 0 16px;
+    }
+  }
+}
+
+#rh.wl-search {
+  transform: translateY(0);
+  width: 100%;
+  height: 100%;
+
+  .rh-content {
+    z-index: 2;
+  }
+
+  .rh-mobile-actions {
+    opacity: 0;
+    transition: ml.transition(opacity, fast, ease-in-out);
+  }
+}
+
+@include pc {
+  .wl {
+    .eb-label {
+      grid-column: span 2;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    &-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 16px;
+      padding: 0 24px 40px;
+    }
+
+    &-card, &-ad-card {
+      max-width: 560px;
+      padding: 16px;
+      margin: 0 auto 16px;
+  
+      @include ml.style((
+        background-color: [color],
+        border: 1px solid [color-2]
+      ), (background, card), (foreground, divider));
+    }
+
+    &-card {
+      border-radius: 4px;
+    }
+  }
+
+  .wl-search {
+    &-input {
+      max-width: 800px;
+      width: 50%;
+      height: 32px;
+      padding: 0 16px;
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+      @include ml.style(background-color, (background, disabled-list-option));
+
+      &::placeholder {
+        font-size: 14px;
+      }
+    }
+
+    @include combine('.ml-button') {
+      &-submit-button {
+        display: inline-flex;
+      }
+    }
   }
 }

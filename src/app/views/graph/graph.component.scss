@@ -1,0 +1,61 @@
+@use 'src/app/theme' as ml;
+@use 'src/app/media-query' as *;
+@use 'src/app/root-styles/variables' as root;
+
+.gp {
+  &-card {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  &-actions {
+    &-wrapper {
+      display: flex;
+      // @include ml.elevation(1);
+    }
+
+    & {
+      display: block;
+      width: 100%;
+      height: 80px;
+      min-width: 0;
+      border-radius: 0;
+      line-height: normal;
+      padding: 16px 8px;
+
+      background-color: transparent;
+      transition-property: background-color, color;
+      transition-duration: ml.transition-duration(fast);
+      transition-timing-function: ml.transition-timing-function(standard);
+    }
+
+    &-label {
+      display: block;
+    }
+
+    &-data {
+      margin-top: 8px;
+    }
+  }
+
+  &-chart {
+    &-wrapper {
+      height: 100%;
+      overflow: hidden;
+      padding: 8px 8px 8px 4px;
+      box-sizing: border-box;
+    }
+  }
+}
+
+
+@include pc {
+  .gp {
+    &-chart {
+      height: auto !important;
+    }
+  }
+}

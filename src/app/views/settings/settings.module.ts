@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 
 import { SettingsRoutingModule } from './settings-routing.module';
 import { SettingsComponent } from './settings.component';
-
+import { MlSlideToggleModule } from '@material-lite/angular/slide-toggle';
+import { MlButtonModule } from '@material-lite/angular/button';
 
 @NgModule({
   declarations: [
@@ -11,7 +12,9 @@ import { SettingsComponent } from './settings.component';
   ],
   imports: [
     CommonModule,
-    SettingsRoutingModule
+    SettingsRoutingModule,
+    MlButtonModule,
+    MlSlideToggleModule
   ]
 })
 export class SettingsModule { }

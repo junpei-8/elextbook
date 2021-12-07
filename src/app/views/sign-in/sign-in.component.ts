@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { RootHeader } from 'src/app/root-header.service';
 
 @Component({
-  selector: 'app-sign-in',
+  selector: 'eb-sign-in',
   templateUrl: './sign-in.component.html',
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -9,7 +10,11 @@ import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation } from '@
 })
 export class SignInComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    rootHeader: RootHeader
+  ) {
+    rootHeader.setup();
+  }
 
   ngOnInit(): void {
   }

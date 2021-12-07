@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { WorkbookListComponent } from './list.component';
 import { WorkbookListRoutingModule } from './list-routing.module';
+import { MlButtonModule } from '@material-lite/angular/button';
 
 
 @NgModule({
@@ -11,6 +12,7 @@ import { WorkbookListRoutingModule } from './list-routing.module';
   ],
   imports: [
     CommonModule,
+    MlButtonModule,
     WorkbookListRoutingModule,
   ]
 })

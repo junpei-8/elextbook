@@ -1,2 +1,38 @@
-<section class="wl-section">
+<ng-template #rhContent>
+  <form class="wl-search-box" (submit)="search($event)">
+    <input #searchInputRef class="wl-search-input" placeholder="Search" type="text" aria-label="Search input field" />
+    <button mlButton class="wl-search-submit-button" type="submit" aria-label="Search submit field">
+      <svg xmlns="http://www.w3.org/2000/svg" class="rh-icon" role="img" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    </button>
+  </form>
+
+  <div class="wl-suggest">
+  </div>
+</ng-template>
+
+
+<section *ngFor="let list of lists; trackBy: trackCategory" class="wl-section">
+  <span class="eb-label">{{ list.category }}</span>
+
+  <ng-template ngFor let-data [ngForOf]="list.dataset" [ngForTrackBy]="trackDataId">
+    <a *ngIf="data; else adSense" class="wl-card" aria-label="Go to quiz" [routerLink]="'/workbook-game/' + data.id">
+      <h3 class="wl-card-title">{{ data.title }}</h3>
+      <div class="wl-card-thumbnail">{{ data.shortTitle }}</div>
+      <div class="wl-card-desc">
+        <span>第２種電気工事士の過去問</span>
+        <div class="wl-card-tag-wrapper">
+          <span *ngFor="let tag of data.tags" class="wl-card-tag">{{ data.tags }}</span>
+        </div>
+      </div>
+      <div class="wl-card-overlay"></div>
+    </a>
+  </ng-template>
 </section>
+
+<ng-template #adSense>
+  <div class="wl-ad-card">
+    <div>AdSense</div>
+    <div class="wl-card-overlay"></div>
+    <!-- <ins class="adsbygoogle" style="display:block" data-ad-format="fluid" data-ad-layout-key="-g0+5w+4l-cg+59" data-ad-client="ca-pub-8223938969285051" data-ad-slot="3537654325"></ins> -->
+  </div>
+</ng-template>
