@@ -1,0 +1,25 @@
+{
+  "hosting": {
+    "site": "elextbook-test",
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/sitemap.xml",
+        "destination": "/sitemap.xml"
+      },
+      {
+        "source": "/sitemap",
+        "destination": "/sitemap.xml"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
