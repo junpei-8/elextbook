@@ -1,7 +1,6 @@
 import { Location } from '@angular/common';
-import { Inject, Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { OperatorFunction, Subscription } from 'rxjs';
 
 interface Partial {
   name: string;
@@ -10,7 +9,6 @@ interface Partial {
 
   /** @desc Disable Immediately Invoked */
   disableII?: boolean;
-  // pipeParams?: OperatorFunction<any, any>[];
 }
 
 interface SubscriptionStorage {
@@ -29,11 +27,15 @@ export class Fragment {
   private _navigate: Router['navigate'];
   private _subscriptionStorage: SubscriptionStorage = {};
 
-  readonly value: string = '';
+  readonly streamedValue: string | null = null;
+
+  get value(): string | null {
+    return this._route.snapshot.fragment;
+  }
 
   constructor(
     _router: Router,
-    _route: ActivatedRoute,
+    private _route: ActivatedRoute,
     private _location: Location,
   ) {
     this._navigate = _router.navigate.bind(_router);
@@ -43,7 +45,7 @@ export class Fragment {
   }
 
   private _onChangeFragment(fragment: string | null): void {
-    const prevFragment = this.value;
+    const prevFragment = this.streamedValue;
     const storage = this._subscriptionStorage;
 
     if (prevFragment) {
@@ -55,10 +57,10 @@ export class Fragment {
     }
 
     // @ts-ignore
-    this.value = fragment;
+    this.streamedValue = fragment;
   }
 
-  subscribe(partial: Partial): () => void {
+  observe(partial: Partial): () => void {
     const name = partial.name;
     let subscription = this._subscriptionStorage[name];
 
@@ -79,26 +81,19 @@ export class Fragment {
     if (onMismatch)
       subscription.onMismatchEvents.push(onMismatch);
 
-    return () => {
-      if (onMatch) {
-        const events = subscription.onMatchEvents;
-        events.splice(events.indexOf(onMatch));
-      }
-
-      if (onMismatch) {
-        const events = subscription.onMismatchEvents;
-        events.splice(events.indexOf(onMismatch));
-      }
-    }
+    return unobserveFragment.bind(null, subscription, onMatch, onMismatch);
   }
 
   add(name: string): void {
     this._navigate([], { fragment: name });
   }
 
-  remove(): void {
-    if (this.value) {
-      this._location.back();
+  remove(name?: string): void {
+    const value = this.value;
+    if (value) {
+      if (!name || name === value) {
+        this._location.back();
+      }
     }
   }
 
@@ -109,5 +104,18 @@ export class Fragment {
     } else {
       this._navigate([], { fragment: name });
     }
+  }
+}
+
+type Subscription = SubscriptionStorage[number];
+function unobserveFragment(subscription: Subscription, onMatch?: () => void, onMismatch?: () => void): void {
+  if (onMatch) {
+    const events = subscription.onMatchEvents;
+    events.splice(events.indexOf(onMatch));
+  }
+
+  if (onMismatch) {
+    const events = subscription.onMismatchEvents;
+    events.splice(events.indexOf(onMismatch));
   }
 }
