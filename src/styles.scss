@@ -1,3 +1,5 @@
+@use 'sass:map';
+
 @use './app/media-query' as *;
 @use './app/theme' as ml;
 
@@ -12,3 +14,51 @@
 
 @include ml.core();
 @include ml.themes();
+
+@include ml.css-variables-style((
+  foreground: (
+    base:              white,
+    opposite-base:     black,
+    divider:           ml.$dark-dividers,
+    disabled-text:     ml.$dark-disabled-text,
+    elevation:         black,
+    hint-text:         ml.$dark-disabled-text,
+    secondary-text:    ml.$dark-secondary-text,
+    text:              rgba(black, 0.88),
+    slider-min:        rgba(black, 0.88),
+    slider-off:        rgba(black, 0.24),
+    slider-off-active: rgba(black, 0.4),
+  ),
+  background: (
+    status-bar:               map.get(ml.$grey-palette, 300),
+    app-bar:                  map.get(ml.$grey-palette, 100),
+    background:               map.get(ml.$grey-palette, 50),
+    hovered:                  ml.$dark-hovered,
+    focused:                  ml.$dark-focused,
+    card:                     white,
+    dialog:                   white,
+    disabled-button:          rgba(black, 0.12),
+    raised-button:            white,
+    disabled-button-toggle:   map.get(ml.$grey-palette, 200),
+    unselected-chip:          map.get(ml.$grey-palette, 300),
+    tooltip:                  map.get(ml.$grey-palette, 700),
+  ),
+  color: (
+    primary: (
+      default: map.get(ml.$purple-palette, 500),
+      default-contrast: map.get(ml.$purple-palette, contrast, 500),
+    ),
+    secondary: (
+      default: map.get(ml.$light-green-palette, 500),
+      default-contrast: map.get(ml.$light-green-palette, contrast, 700),
+    ),
+    accent: (
+      default: map.get(ml.$indigo-palette, 500),
+      default-contrast: map.get(ml.$indigo-palette, contrast, 500),
+    ),
+    warn: (
+      default: map.get(ml.$warn-palette, default),
+      default-contrast: map.get(ml.$warn-palette, default-contrast),
+    )
+  )
+))

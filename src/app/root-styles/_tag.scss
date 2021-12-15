@@ -57,8 +57,17 @@ input {
   border: none;
   outline: none;
   box-shadow: none;
+  box-sizing: border-box;
 
   &::placeholder {
     font: inherit;
   }
+}
+
+svg {
+  fill: currentColor;
+}
+
+b {
+  font-weight: 500;
 }

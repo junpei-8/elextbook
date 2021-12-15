@@ -3,14 +3,94 @@
 @use '../media-query' as *;
 
 .rm {
-  position: relative;
+  position: absolute;
   height: 100%;
   box-sizing: border-box;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  > :nth-child(4) {
+    display: none;
+  }
+
+  &-loading {
+    &-overlay {
+      position: fixed !important;
+      z-index: 8;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      @include ml.style(background-color, (background, background));
+    }
+
+    &-spinner {
+      position: absolute;
+      top: ($header-mp-height + ($header-mp-gap * 2) + 40px);
+      width: 160px;
+      height: 160px;
+      transform: rotate(-90deg);
+      transform-origin: center;
+      animation: rm-loading-spinner-linear-rotate 2000ms linear infinite;
+      overflow: visible;
+    }
+    
+    &-circle {
+      animation: rm-loading-spinner-stroke-rotate 4000ms cubic-bezier(0.34, 0, 0.24, 1) infinite;
+      transition: stroke-dashoffset 224ms linear;
+      transform-origin: center;
+      fill: transparent;
+      @include ml.style((stroke: [color]), (color, accent, default));
+    }
+  }
+}
+
+@keyframes rm-loading-spinner-linear-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rm-loading-spinner-stroke-rotate {
+  0%      { stroke-dashoffset: 448;  transform: rotate(0); }
+  12.5%   { stroke-dashoffset: 94;    transform: rotate(0); }
+  12.5001%  { stroke-dashoffset: 94;    transform: rotateX(180deg) rotate(72.5deg); }
+  25%     { stroke-dashoffset: 448;  transform: rotateX(180deg) rotate(72.5deg); }
+
+  25.0001%   { stroke-dashoffset: 448;  transform: rotate(270deg); }
+  37.5%   { stroke-dashoffset: 94;    transform: rotate(270deg); }
+  37.5001%  { stroke-dashoffset: 94;    transform: rotateX(180deg) rotate(161.5deg); }
+  50%     { stroke-dashoffset: 448;  transform: rotateX(180deg) rotate(161.5deg); }
+
+  50.0001%  { stroke-dashoffset: 448;  transform: rotate(180deg); }
+  62.5%   { stroke-dashoffset: 94;    transform: rotate(180deg); }
+  62.5001%  { stroke-dashoffset: 94;    transform: rotateX(180deg) rotate(251.5deg); }
+  75%     { stroke-dashoffset: 448;  transform: rotateX(180deg) rotate(251.5deg); }
+
+  75.0001%  { stroke-dashoffset: 448;  transform: rotate(90deg); }
+  87.5%   { stroke-dashoffset: 94;    transform: rotate(90deg); }
+  87.5001%  { stroke-dashoffset: 94;    transform: rotateX(180deg) rotate(341.5deg); }
+  100%    { stroke-dashoffset: 448;  transform: rotateX(180deg) rotate(341.5deg); }
 }
 
 @include pc {
   .rm {
     padding-top: $header-pc-height;
-    margin-left: $nav-pc-width;
+    padding-left: $nav-pc-width;
+    // margin-left: $nav-pc-width;
+
+    &-loading {
+      // &-overlay {
+      //   top: $header-pc-height;
+      // }
+      &-spinner {
+        top: 40px;
+      }
+    }
   }
 }

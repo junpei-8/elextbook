@@ -1,25 +1,14 @@
 @use '@material-lite/theming' as *;
 @forward '@material-lite/theming';
 
-$primary-palette: define-palette($purple-palette);
-$secondary-palette: define-palette($light-green-palette);
-
 $material-lite: (
-  default: define-light-theme((
-    color: (
-      primary: $primary-palette,
-      accent:  define-palette($indigo-palette),
-      secondary: $secondary-palette,
-      warn:    $warn-palette
+  default: define-css-variables-theme((
+    foreground: (
+      opposite-base: var(--ml-fg-opposite-base)
+    ),
+    color: define-css-variables-color((primary, secondary, accent, warn)),
+    config: (
+      includes: (button, ripple, slide-toggle)
     )
-  )),
-
-  '.dark-theme': define-dark-theme((
-    color: (
-      primary: $primary-palette,
-      accent:  define-palette($amber-palette),
-      secondary: $secondary-palette,
-      warn:    $warn-palette
-    )
-  )),
+  ))
 );

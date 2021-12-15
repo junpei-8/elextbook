@@ -11,6 +11,18 @@
   // Animationを付与するために必須
   top: 0;
   left: 0;
+
+  &-spacer {
+    padding-top: ($header-mp-height + ($header-mp-gap * 2) + 8px);
+    padding-bottom: ($nav-mp-height + 8px);
+  }
+
+  &-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 
@@ -29,7 +41,7 @@
 
   width: 100%;
   margin: 0 auto;
-  padding: 0 !important;
+  padding: 0;
 
   &-section {
     display: flex;
@@ -80,6 +92,7 @@
 
   .ml-button {
     width: 100%;
+    height: 40px;
     justify-content: flex-start;
     padding: 8px 24px;
     border-radius: 0;
@@ -117,16 +130,20 @@
   border-radius: 4px;
 }
 
-.eb-view-spacer {
-  padding-top: ($header-mp-height + ($header-mp-gap * 2) + 8px);
-  padding-bottom: ($nav-mp-height + 8px);
-}
-
 .eb-zero-padding {
   padding: 0 !important;
 }
 .eb-zero-margin {
   margin: 0 !important;
+}
+
+.eb-flex {
+  display: flex;
+}
+
+.eb-switcher {
+  width: 100%;
+  height: 100%;
 }
 
 @include pc {
@@ -145,8 +162,8 @@
     }
   
     &-form {
-      flex: 1;
       width: auto;
+      flex-grow: 1;
 
       &-desc {
         font-size: 14px;

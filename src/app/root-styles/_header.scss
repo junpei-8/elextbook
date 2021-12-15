@@ -63,11 +63,12 @@
   &-button {
     margin: 0 4px;
     z-index: 2;
+    flex-shrink: 0;
   }
-  &-left-actions {
+  &-left-action {
     margin-left: 8px;
   }
-  &-right-actions {
+  &-right-action {
     margin-right: 8px;
   }
 
@@ -83,31 +84,33 @@
   }
 
   &-left-icon-path {
-    backface-visibility: hidden;
     opacity: 0;
-    transform: rotate(-135deg);
+    transform: rotate(-90deg);
     transform-origin: center;
-    // transition:
-    //   transform ml.transition-duration(normal) ml.transition-timing-function(ease-out),
-    //   opacity ml.transition-duration(fast) ml.transition-timing-function(ease-in);
+
+    overflow: hidden;
+    backface-visibility: hidden;
+
     transition-property: transform, opacity;
-    transition-duration: ml.transition-duration(normal);
+    transition-duration: ml.transition-duration(slow);
     transition-timing-function: ml.transition-timing-function(ease-out);
   }
   &-visible-left-icon-path {
     opacity: 1;
     transform: rotate(0);
-    transition-timing-function: ml.transition-timing-function(ease-in);
   }
 
   &-right-icon-path {
-    backface-visibility: hidden;
     opacity: 0;
     transform: scale(0.8);
     transform-origin: center;
+
+    overflow: hidden;
+    backface-visibility: hidden;
   
-    // Out transition
     transition-property: transform, opacity;
+
+    // Out transition
     transition-duration: math.div(ml.transition-duration(normal), 2);
     transition-timing-function: ml.transition-timing-function(ease-in);
   }
@@ -126,10 +129,12 @@
     top: 0;
     left: 0;
 
-    height: 100%;
-    flex: 1;
+    width: 100%;
+    // flex-grow: 1;
 
-    margin: 0 8px;
+    height: 100%;
+
+    margin: 0 4px;
 
     &-enter-active,
     &-leave-active {
@@ -143,7 +148,7 @@
     }
   }
 
-  &-mobile-actions {
+  &-mobile-action {
     position: absolute !important;
     overflow: visible !important;
     top: 0; left: 0;
@@ -174,9 +179,9 @@
       height: 18px;
     }
 
-    &-left-actions {
+    &-left-action {
       height: $header-pc-height;
-      width: $header-pc-height;
+      width: $header-pc-height !important;
       min-width: 0 !important;
 
       margin: 0;
