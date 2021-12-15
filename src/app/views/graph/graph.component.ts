@@ -1,25 +1,30 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, NgZone, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, NgZone, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { RootHeader } from 'src/app/root-header.service';
+import { User } from 'src/app/services/user.service';
+import { User as AuthUser } from 'firebase/auth';
 
-import { ChartThemeType, CHART_CONFIG, CHART_LABEL_LENGTH, setChartTheme } from './chart';
-import { Chart } from 'chart.js';
+import { ChartTheme, CHART_CONFIG, ChartDataset } from './chart';
+import { Chart, GridLineOptions } from 'chart.js';
 import './chart-register';
+import { _DeepPartialObject } from 'chart.js/types/utils';
+import { RootView } from 'src/app/root-view.service';
+import { Subscription } from 'rxjs';
+import { Firebase, FIREBASE } from 'src/app/services/firebase';
+import { DataSnapshot, onValue, ref } from '@firebase/database';
 
-interface UserData {
-  workbook: {
-    counter: {
-      [category: string]: {
-        [date: number]: { // (ex) 5/8 => 508, 10/27 => 1027
-          corrected: number;
-          mistaken: number;
-        }
+interface UserDataType {
+  workbookCounter: {
+    [category: string]: {
+      [date: number]: { // (ex) 5/8 => 508, 10/27 => 1027
+        corrected: number;
+        mistaken: number;
       }
     }
   }
 }
 
-type ChartKey = 'percentage' | 'answered' | keyof UserData['workbook']['counter'][number][number];
-type ChartLabel = '正答率' | '回答数' | '正解数' | 'ミス数';
+type ChartKey = 'percentage' | 'answered' | 'corrected' | 'mistaken';
 
 interface ChartData {
   [date: number]: {
@@ -28,9 +33,10 @@ interface ChartData {
 }
 
 interface ChartPointData {
+  index: number;
   value: string | number;
   date: number;
-  index: number;
+  displayDate: string;
 }
 
 interface ChartXGridData {
@@ -38,44 +44,35 @@ interface ChartXGridData {
   index: number;
 }
 
-interface Actions {
-  key: ChartKey;
-  label: ChartLabel;
-  theme: string;
-}
-
-const BASE_ACTION_BUTTONS: Actions[] = [
-  { key: 'percentage', label: '正答率', theme: 'primary' },
-  { key: 'corrected',  label: '正解数', theme: 'secondary' },
-  { key: 'mistaken',   label: 'ミス数', theme: 'warn' },
-  { key: 'answered',   label: '回答数', theme: 'accent' },
-];
-
-const USER_DATA: UserData = {
-  workbook: {
-    counter: (() => {
-      const chartDateList = createDateList();
-      const entryCounter: UserData['workbook']['counter'] = {
-        denko2: {},
-        otu4: {}
-      };
-
-      chartDateList.forEach(date => {
-        // @ts-ignore
-        entryCounter.denko2[date] = {
-          corrected: Math.floor(Math.random() * 100),
-          mistaken:  Math.floor(Math.random() * 100),
-        };
-        // @ts-ignore
-        entryCounter.otu4[date] = {
-          corrected: Math.floor(Math.random() * 100),
-          mistaken:  Math.floor(Math.random() * 100),
-        };
-      })
-
-      return entryCounter;
-    })()
+type ChartScales = {
+  [key in 'x' | 'y']: {
+    grid: _DeepPartialObject<GridLineOptions>
   }
+};
+
+const USER_DATA: UserDataType = {
+  workbookCounter: (() => {
+    const chartDateList = createDateList();
+    const entryCounter: UserDataType['workbookCounter'] = {
+      denko2: {},
+      otu4: {}
+    };
+
+    chartDateList.forEach(date => {
+      // @ts-ignore
+      entryCounter.denko2[date] = {
+        corrected: Math.floor(Math.random() * 100),
+        mistaken:  Math.floor(Math.random() * 100),
+      };
+      // @ts-ignore
+      entryCounter.otu4[date] = {
+        corrected: Math.floor(Math.random() * 100),
+        mistaken:  Math.floor(Math.random() * 100),
+      };
+    })
+
+    return entryCounter;
+  })()
 }
 
 
@@ -85,161 +82,253 @@ const USER_DATA: UserData = {
   styleUrls: ['./graph.component.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'gp eb-view eb-limit eb-view-spacer' }
+  host: {
+    class: 'gp eb-view eb-limit eb-view-spacer',
+  }
 })
-export class GraphComponent {
-  private _themeType: ChartThemeType = 'light';
-
+export class GraphComponent implements OnDestroy {
   @ViewChild('chartRef') set onSetChartRef(chartRef: ElementRef<any>) {
+    if (!chartRef) { return; }
+
     this._ngZone.runOutsideAngular(() => {
       const config = CHART_CONFIG;
       const configOptions = config.options!;
 
-      config.data.labels = dateListPipe(this.chartDateList);
+      config.data.labels = this._chartDateList.map(date => createDisplayDate(date));
       configOptions.onClick = this._onClickChart.bind(this);
       configOptions.onHover = this._onHoverChart.bind(this);
 
-      setChartTheme(config, this._themeType);
-      const chart = this.chart = new Chart(chartRef.nativeElement, config);
-  
-      // @ts-ignore
-      this.chartDataset = chart.data.datasets[0];
-  
-      // DBからUserDataを持ってくる必要がある
-      new Promise(resolve => resolve(USER_DATA))
-        .then(userData => {
-          this.userWorkbookData = (userData as UserData).workbook;
-          this.chartData = this.createChartData();
-          this.selectChart('percentage');
-          this._ngZone.run(() => this._changeDetector.markForCheck());
-        })
+      const canvasEl = chartRef.nativeElement;
+      (canvasEl as HTMLElement).addEventListener('mouseleave', this._onMouseoutChart.bind(this));
+      (canvasEl as HTMLElement).addEventListener('mouseenter', () => this.hoveredChartXGridIndex = null);
+
+      const chart = this._chart = new Chart(canvasEl, config);
+      this._chartDataset = chart.data.datasets[0];
+
+      this._updateChartTheme();
+
+      const dbRef = ref(this._firebase.realtimeDB, 'users/' + (this._user.state as AuthUser).uid + '/workbookCounter');
+      this._unsubscribeChartData = onValue(dbRef, (snapshot) => this._onGetCounter(snapshot));
     })
   }
-  chart: Chart;
-  chartData: ChartData;
-  chartDateList = createDateList();
-  readonly chartDataset: Chart['data']['datasets'][number];
-
-  userWorkbookData: UserData['workbook'];
-
-  readonly actionsList: Actions[] = BASE_ACTION_BUTTONS;
-
-  selectedChartKey: string;
-  selectedChartPointData: ChartPointData | null;
-  selectedChartXGridData: ChartXGridData | null;
-
-  constructor(
-    _rootHeader: RootHeader,
-    private _ngZone: NgZone,
-    private _changeDetector: ChangeDetectorRef
-  ) {
-    _rootHeader.setup()
+  private _chart: Chart;
+  private _chartTheme: ChartTheme = {} as any;
+  private _chartData: ChartData;
+  private _chartDataset: ChartDataset;
+  private get _chartScales(): ChartScales {
+    return this._chart.options.scales as any
   }
 
-  createChartData(filter?: string[]): ChartData {
-    const workbookCounter = this.userWorkbookData.counter;
+  private _chartDateList = createDateList(); // [1201, 1202, 1203...]
+
+  private _unsubscribeChartData: (() => void) | undefined;
+
+  selectedChartPointData: ChartPointData | null;
+  hoveredChartXGridIndex: number | null = null;
+
+  selectedChart: {
+    [key in ChartKey]?: true
+  } = {};
+
+  hasSignedIn: boolean;
+  private _userChangesSubscription: Subscription;
+
+  constructor(
+    rootHeader: RootHeader,
+    private _user: User,
+    private _rootView: RootView,
+    private _ngZone: NgZone,
+    private _changeDetector: ChangeDetectorRef,
+    @Inject(DOCUMENT) private _document: Document,
+    @Inject(FIREBASE) private _firebase: Firebase
+  ) {
+    this._userChangesSubscription = _user.changes
+      .subscribe((state) => {
+        this.hasSignedIn = !!state;
+        this._rootView.loadedRoute.graph = !state;
+
+        _changeDetector.markForCheck();
+      })
+
+    rootHeader.setup();
+  }
+
+  ngOnDestroy(): void {
+    this._rootView.loadedRoute.graph = false;
+    this._userChangesSubscription.unsubscribe();
+    this._unsubscribeChartData?.();
+  }
+
+  private _createChartData(counters: UserDataType['workbookCounter'], categories?: string[]): ChartData {
     const chartData: ChartData = {};
 
-    if (!filter) {
-      filter = Object.keys(workbookCounter);
+    if (!categories) {
+      categories = Object.keys(counters);
     }
 
-    const chartDateList = this.chartDateList;
-    filter.forEach((key) => {
-      const _counter = workbookCounter[key];
+    const dateList = this._chartDateList;
+    const dateListLen = dateList.length;
 
-      chartDateList.forEach(date => {
+    const categoryLen = categories.length;
+    for (let index = 0; index < categoryLen; index++) {
+      const counter = counters[categories[index]];
+
+      for (let i = 0; i < dateListLen; i++) {
+        const date = dateList[i];
+
         const chartDataRef =
-          chartData[date] ||
-          (chartData[date] = { corrected: 0, mistaken: 0 } as ChartData[number]);
+          chartData[date] || (chartData[date] = { corrected: 0, mistaken: 0 } as any);
 
-        const counter = _counter[date];
-        const corrected = counter.corrected + chartDataRef.corrected;
-        const mistaken = counter.mistaken + chartDataRef.mistaken;
+        const count = counter[date];
+        const corrected = count.corrected + chartDataRef.corrected;
+        const mistaken = count.mistaken + chartDataRef.mistaken;
 
         const answered = corrected + mistaken;
-  
+
         chartData[date] = {
           corrected, mistaken, answered,
           percentage: Math.round((corrected / answered) * 1000) / 10,
         }
-      })
-    })
+      }
+    }
 
     return chartData;
   }
 
-  selectChart(selectedKey: ChartKey) {
-    if (this.selectedChartKey === selectedKey) return;
-    this.selectedChartKey = selectedKey;
 
-    this.chartDataset.data = this.chartDateList.map(date => this.chartData[date][selectedKey]);
+  selectChart(key: ChartKey) {
+    if (this.selectedChart[key]) return;
+    this.selectedChart = {
+      [key]: true
+    };
 
-    const chart = this.chart;
-    setChartTheme(chart, this._themeType, {});
+    this._chartDataset.data = this._chartDateList.map(date => this._chartData[date][key]);
 
+    this._clearChartColor();
     this.selectedChartPointData = null;
-    this.selectedChartXGridData = null;
+    this.hoveredChartXGridIndex = null;
 
-    this._ngZone.runOutsideAngular(() => chart.update('normal'));
+    this._ngZone.runOutsideAngular(() => this._chart.update('normal'));
   }
 
-  // It's outside the naZone
+  private _onGetCounter(snapshot: DataSnapshot) {
+    this._rootView.loadedRoute.graph = true;
+    this._chartData = this._createChartData(snapshot.val() || USER_DATA.workbookCounter);
+    this.selectChart('percentage'); // <= chart.update() は呼び出される
+    this._ngZone.run(() => this._changeDetector.markForCheck());
+  }
+
   private _onClickChart(event: any) {
-    const element = this.chart.getElementsAtEventForMode(event, 'index', { axis: 'x' }, true)[0];
-    if (element) {
-      const index = element.index;
-      const date = this.chartDateList[index];
-
-      let pointData: ChartPointData | null = null;
-      let selected: number | undefined = void 0;
-      let hovered: number | undefined = selected;
-
-      const prevDate = this.selectedChartPointData?.date;
-      if (date !== prevDate) {
-        const data = this.chartDataset.data;
-
-        pointData = {
-          date, index,
-          value: data[index] || 'なし' as any
-        };
-
-        selected = index;
-        hovered = this.selectedChartXGridData?.index;
-      }
-
-      const chart = this.chart;
-      setChartTheme(chart, this._themeType, { selected, hovered });
-      chart.update('normal');
-
-      this._ngZone.run(() => {
-        this.selectedChartPointData = pointData;
-        this._changeDetector.markForCheck();
-      })
-    }
-  }
-
-  // It's outside the naZone
-  private _onHoverChart(event: any) {
-    const chart = this.chart;
+    const chart = this._chart;
     const element = chart.getElementsAtEventForMode(event, 'index', { axis: 'x' }, true)[0];
 
     if (element) {
       const index = element.index;
-      const date = this.chartDateList[index];
+      const date = this._chartDateList[index];
 
-      const prevXGridData = this.selectedChartXGridData;
-      if (prevXGridData && prevXGridData.date === date) return;
+      const prevPointData = this.selectedChartPointData;
+      if (!prevPointData || prevPointData.index !== index) {
+        this._highlightChartPoint(index);
+        this.selectedChartPointData = {
+          index, date,
+          displayDate: createDisplayDate(date),
+          value: this._chartDataset.data[index] || 'なし',
+        }
+        this._highlightChartGrid(null);
 
-      this.selectedChartXGridData = { date, index };
+      } else {
+        this._clearChartColor();
+        this.selectedChartPointData = null;
+        // this.hoveredChartXGridIndex = null; <= 消してすぐハイライトしないように、初期化は行わない
+      }
 
-      setChartTheme(this.chart, this._themeType, { selected: this.selectedChartPointData?.index, hovered: index });
-      chart.update('normal');
+      chart.update();
+      this._ngZone.run(() => this._changeDetector.markForCheck());
     }
   }
 
-  trackActions(i: number, actions: Actions): string {
-    return actions.key;
+  private _onHoverChart(event: any) {
+    const chart = this._chart;
+    const element = chart.getElementsAtEventForMode(event, 'index', { axis: 'x' }, true)[0];
+
+    if (element) {
+      const index = element.index;
+
+      const prevXGridIndex = this.hoveredChartXGridIndex;
+      if (prevXGridIndex === null || prevXGridIndex !== index) {
+        this._highlightChartGrid(index);
+        this.hoveredChartXGridIndex = index;
+        chart.update();
+      }
+    }
+  }
+
+  private _onMouseoutChart() {
+    this._highlightChartGrid(null);
+    this._chart.update();
+  }
+
+  private _updateChartTheme(): void {
+    const styleRef = getComputedStyle(this._document.body);
+    
+    const theme = this._chartTheme = {
+      grid: styleRef.getPropertyValue('--ml-fg-divider'),
+      hoveredGrid: styleRef.getPropertyValue('--ml-fg-slider-off-active'),
+      selectedGrid: styleRef.getPropertyValue('--ml-fg-slider-off'),
+      line: styleRef.getPropertyValue('--ml-fg-slider-off'),
+      point: styleRef.getPropertyValue('--ml-primary'),
+      selectedPoint: styleRef.getPropertyValue('--ml-secondary')
+    }
+
+    const scales = this._chartScales;
+    scales.y.grid = scales.x.grid = { color: theme.grid };
+
+    this._chartDataset.borderColor = theme.line;
+  }
+
+  private _highlightChartPoint(index: number): void {
+    const theme = this._chartTheme;
+    
+    const color = theme.point;
+    const colors = [color, color, color, color, color, color, color];
+
+    colors[index] = theme.selectedPoint;
+
+    const dataset = this._chartDataset;
+    dataset.pointBorderColor = dataset.pointBackgroundColor = colors;
+  }
+
+  private _highlightChartGrid(index: number | null): void {
+    const theme = this._chartTheme;
+
+    const colorCode = theme.grid;
+    const color = [colorCode, colorCode, colorCode, colorCode, colorCode, colorCode, colorCode];
+    const lineWidth = [1, 1, 1, 1, 1, 1, 1];
+
+    const selectedXGrid = this.selectedChartPointData;
+    if (selectedXGrid) {
+      const i = selectedXGrid.index;
+      color[i] = theme.selectedGrid;
+      lineWidth[i] = 2;
+    }
+
+    if (index !== null) {
+      color[index] = theme.hoveredGrid;
+      lineWidth[index] = 2;
+    }
+
+    this._chartScales.x.grid = { color, lineWidth };
+  }
+
+  private _clearChartColor(): void {
+    const theme = this._chartTheme;
+
+    const dataset = this._chartDataset;
+    dataset.pointBorderColor = dataset.pointBackgroundColor = [theme.point];
+
+    this._chartScales.x.grid = {
+      color: theme.grid
+    }
   }
 }
 
@@ -252,8 +341,7 @@ function createDateList(): number[] {
   const dateList: number[] = [];
   let lastDayOfLastMonth: undefined | number;
 
-  const length = CHART_LABEL_LENGTH - 1;
-  for (let i = length; i >= 0; i--){
+  for (let i = 6; i >= 0; i--){
     let _month = month;
     let _day = day - i;
 
@@ -266,21 +354,19 @@ function createDateList(): number[] {
       _day = lastDayOfLastMonth! + day - i;
     }
 
-    // parseFloat( month{number} + day{string} )
     dateList.push(parseFloat((_month + 1) + ('0' + _day).slice(-2)));
   }
 
   return dateList;
 }
 
-function dateListPipe(dateList: number[]): string[] {
-  return dateList.map(date => {
-    let strDate = date + '';
 
-    if (strDate.length < 4) {
-      strDate = '0' + strDate;
-    }
+function createDisplayDate(date: number): string {
+  let strDate = date + '';
 
-    return `${strDate[0] + strDate[1]}/${strDate[2] + strDate[3]}`;
-  })
+  if (strDate.length < 4) {
+    strDate = '0' + strDate;
+  }
+
+  return `${strDate[0] + strDate[1]}/${strDate[2] + strDate[3]}`;
 }

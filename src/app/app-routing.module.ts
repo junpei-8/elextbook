@@ -4,15 +4,16 @@ import { MetaData } from './services/meta.service';
 import { HomeComponent } from './views/home/home.component';
 import { NotFoundComponent } from './views/not-found/not-found.component';
 
-export type RootRouteNames = 'home' | 'graph' | 'workbook' | 'library' | 'settings' | 'sign-in' | 'sing-up';
+export type RootRouteKeys = 'home' | 'graph' | 'workbook-game' | 'workbook-list' | 'library' | 'settings' | 'sign-in' | 'not-found';
+export type RootRouteNames = 'home' | 'graph' | 'workbook' | 'library' | 'settings' | 'sign-in';
 
 export interface RouteData extends MetaData {
-  key: string;
+  key: RootRouteKeys;
 
   root?: {
     key: RootRouteNames;
     index?: number;
-  }
+  };
 }
 
 export interface Route extends BaseRoute {
@@ -44,7 +45,7 @@ const routes: Routes = [
       root: {
         key: 'graph',
         index: 1
-      }
+      },
     }
   },
   {
@@ -108,15 +109,15 @@ const routes: Routes = [
       desc: 'Elextbook（エレクトブック）にサインインすることで、たくさんの便利な機能を利用できるようにし、効率よく勉強しましょう。',
     }
   },
-  {
-    path: 'sign-up',
-    loadChildren: () => import('./views/sign-up/sign-up.module').then(m => m.SignUpModule),
-    data: {
-      key: 'sign-up',
-      title: 'アカウント作成',
-      desc: 'Elextbook（エレクトブック）のアカウントを作ることで、便利な機能の利用を開始するためのステップを踏み出しましょう。',
-    }
-  },
+  // {
+  //   path: 'sign-up',
+  //   loadChildren: () => import('./views/sign-up/sign-up.module').then(m => m.SignUpModule),
+  //   data: {
+  //     key: 'sign-up',
+  //     title: 'アカウント作成',
+  //     desc: 'Elextbook（エレクトブック）のアカウントを作ることで、便利な機能の利用を開始するためのステップを踏み出しましょう。',
+  //   }
+  // },
 
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   {

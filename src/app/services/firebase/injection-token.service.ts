@@ -32,19 +32,19 @@ export const FIREBASE = new InjectionToken<Firebase>('It Can Firebase Refs', {
         return ref.app || (ref.app = initializeApp(FIREBASE_CONFIG));
       },
       get firestore(): Firestore {
-        return ref.firestore || (ref.firestore = getFirestore(ref.app));
+        return ref.firestore || (ref.firestore = getFirestore(this.app));
       },
       get realtimeDB(): Database {
-        return ref.realtimeDB || (ref.realtimeDB = getDatabase(ref.app));
+        return ref.realtimeDB || (ref.realtimeDB = getDatabase(this.app));
       },
       get storage(): FirebaseStorage {
-        return ref.storage || (ref.storage = getStorage(ref.app));
+        return ref.storage || (ref.storage = getStorage(this.app));
       },    
       get auth(): Auth {
-        return ref.auth || (ref.auth = runOutsideNgZone(() => getAuth(ref.app)));
+        return ref.auth || (ref.auth = runOutsideNgZone(() => getAuth(this.app)));
       },    
       get analytics(): Analytics {
-        return ref.analytics || (ref.analytics = runOutsideNgZone(() => getAnalytics(ref.app)));
+        return ref.analytics || (ref.analytics = runOutsideNgZone(() => getAnalytics(this.app)));
       }
     }
   }

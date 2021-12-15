@@ -3,6 +3,13 @@
 @use 'src/app/root-styles/variables' as root;
 
 .gp {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  top: 0;
+  left: 0;
+
   &-card {
     display: flex;
     flex-direction: column;
@@ -11,15 +18,16 @@
     overflow: hidden;
   }
 
-  &-actions {
+  &-action {
     &-wrapper {
       display: flex;
-      // @include ml.elevation(1);
+      @include ml.elevation(1);
+      // @include ml.style((border-bottom: 1px solid [color]), (foreground, divider));
     }
 
     & {
       display: block;
-      width: 100%;
+      width: 20%;
       height: 80px;
       min-width: 0;
       border-radius: 0;
@@ -27,9 +35,15 @@
       padding: 16px 8px;
 
       background-color: transparent;
-      transition-property: background-color, color;
+
+      will-change: contents;
+      transition-property: width, background-color, color;
       transition-duration: ml.transition-duration(fast);
       transition-timing-function: ml.transition-timing-function(standard);
+
+      &.ml-primary, &.ml-accent, &.ml-secondary, &.ml-warn {
+        width: 40%;
+      }
     }
 
     &-label {

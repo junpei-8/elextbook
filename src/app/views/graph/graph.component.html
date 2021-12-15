@@ -1,22 +1,58 @@
-<section class="gp-card eb-card">
-  <div class="gp-actions-wrapper">
-    <ng-template ngFor [ngForOf]="actionsList" let-button [ngForTrackBy]="trackActions">
-      <button
-        class="gp-actions" mlButton variant="flat" hoverAction="enabled"
-        [attr.aria-label]="button.label"
-        [theme]="selectedChartKey === button.key ? button.theme : ''"
-        (click)="selectChart(button.key)"
-      >
-        <span class="gp-actions-label">{{ button.label }}</span>
-        <div *ngIf="selectedChartKey === button.key && selectedChartPointData" class="action-button-data">
-          <span>{{ selectedChartPointData!.date }}</span>
-          <span>{{ selectedChartPointData!.value }}</span>
+<div class="eb-switcher" [ngSwitch]="hasSignedIn">
+  <section class="gp-card eb-card" *ngSwitchCase="true">
+    <div class="gp-action-wrapper">
+      <ng-template #selectedData>
+        <div class="gp-selected-data">
+          <span class="gp-selected-data-date">{{ selectedChartPointData!.displayDate }}　</span>
+          <span class="gp-selected-data-value">{{ selectedChartPointData!.value }}</span>
         </div>
+      </ng-template>
+  
+      <button
+        class="gp-action" mlButton variant="flat" hoverAction="enabled" aria-label="正答率を表示"
+        [theme]="selectedChart.percentage ? 'primary' : null"
+        [rippleConfig]="{ overdrive: !selectedChart.percentage }"
+        (click)="selectChart('percentage')"
+      >
+        <span class="gp-action-label">正答率</span>
+        <ng-template [ngIf]="selectedChart.percentage && selectedChartPointData" [ngIfThen]="selectedData"></ng-template>
       </button>
-    </ng-template>
-  </div>
+  
+      <button
+        class="gp-action" mlButton variant="flat" hoverAction="enabled" aria-label="正解数を表示"
+        [theme]="selectedChart.corrected ? 'secondary' : null"
+        [rippleConfig]="{ overdrive: !selectedChart.corrected }"
+        (click)="selectChart('corrected')"
+      >
+        <span class="gp-action-label">正答率</span>
+        <ng-template [ngIf]="selectedChart.corrected && selectedChartPointData" [ngIfThen]="selectedData"></ng-template>
+      </button>
+  
+      <button
+        class="gp-action" mlButton variant="flat" hoverAction="enabled" aria-label="ミス数を表示"
+        [theme]="selectedChart.mistaken ? 'warn' : null"
+        [rippleConfig]="{ overdrive: !selectedChart.mistaken }"
+        (click)="selectChart('mistaken')"
+      >
+        <span class="gp-action-label">ミス数</span>
+        <ng-template [ngIf]="selectedChart.mistaken && selectedChartPointData" [ngIfThen]="selectedData"></ng-template>
+      </button>
+  
+      <button
+        class="gp-action" mlButton variant="flat" hoverAction="enabled" aria-label="回答数を表示"
+        [theme]="selectedChart.answered ? 'accent' : null"
+        [rippleConfig]="{ overdrive: !selectedChart.answered }"
+        (click)="selectChart('answered')"
+      >
+        <span class="gp-action-label">回答数</span>
+        <ng-template [ngIf]="selectedChart.answered && selectedChartPointData" [ngIfThen]="selectedData"></ng-template>
+      </button>
+    </div>
+  
+    <div class="gp-chart-wrapper">
+      <canvas #chartRef class="gp-chart"></canvas>
+    </div>
+  </section>  
 
-  <div class="gp-chart-wrapper">
-    <canvas #chartRef class="gp-chart"></canvas>
-  </div>
-</section>
+  <eb-sign-in-urging *ngSwitchCase="false" d="m15 3-.92 2.07L12 6l2.08.93L15 9l.939-2.07 2.06-.93-2.06-.93L15 3zM3.5 6 3 8l-2 .5L3 9l.5 2L4 9l2-.5L4 8l-.5-2zM21 8c-1.45 0-2.26 1.44-1.93 2.51l-3.55 3.56c-.3-.09-.739-.09-1.04 0l-2.55-2.55C12.27 10.45 11.46 9 10 9c-1.45 0-2.27 1.44-1.93 2.52l-4.56 4.55C2.44 15.74 1 16.55 1 18c0 1.1.9 2 2 2 1.45 0 2.26-1.44 1.93-2.51l4.55-4.56c.3.09.739.09 1.04 0l2.55 2.55C12.73 16.55 13.54 18 15 18c1.45 0 2.27-1.44 1.93-2.52l3.56-3.55c1.07.33 2.51-.48 2.51-1.93 0-1.1-.9-2-2-2z"></eb-sign-in-urging>
+</div>

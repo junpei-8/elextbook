@@ -1,0 +1,23 @@
+@use '../../theme' as ml;
+
+.siu {
+  z-index: 7;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  @include ml.style(background-color, (background, background));
+
+  &.hidden &-section{
+    opacity: 0;
+    transition: none;
+  }
+
+  &-icon {
+    width: 240px;
+  }
+}

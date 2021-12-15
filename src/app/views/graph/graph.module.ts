@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { GraphRoutingModule } from './graph-routing.module';
 import { GraphComponent } from './graph.component';
 import { MlButtonModule } from '@material-lite/angular/button';
+import { SignInUrgingModule } from 'src/app/components/sign-in-urging';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { MlButtonModule } from '@material-lite/angular/button';
   imports: [
     CommonModule,
     MlButtonModule,
-    GraphRoutingModule
+    GraphRoutingModule,
+    SignInUrgingModule
   ]
 })
 export class GraphModule { }

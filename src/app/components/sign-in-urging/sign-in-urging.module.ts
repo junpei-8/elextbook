@@ -1,4 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { MlButtonModule } from '@material-lite/angular/button';
 
 import { SignInUrgingComponent } from './sign-in-urging.component';
@@ -8,7 +10,9 @@ import { SignInUrgingComponent } from './sign-in-urging.component';
     SignInUrgingComponent
   ],
   imports: [
-    MlButtonModule
+    CommonModule,
+    MlButtonModule,
+    RouterModule
   ],
   exports: [
     SignInUrgingComponent

@@ -10,17 +10,16 @@
 
   <section class="eb-settings-section">
     <span class="eb-settings-label">ユーザー</span>
-    <div class="eb-settings-form">
-      <ng-template [ngIf]="true" [ngIfElse]="logout">
-        <button mlButton routerLink="/sign-in">ログイン</button>
+
+    <div class="eb-settings-form" [ngSwitch]="hasSignedIn">
+      <ng-template [ngSwitchCase]="true">
+        <button mlButton aria-label="ログアウトする" (click)="user.signOut()">ログアウト</button>
+        <button mlButton aria-label="アカウントを削除する" (click)="user.delete()">アカウントの削除</button>
       </ng-template>
 
-      <ng-template #logout>
-        <button mlButton>アカウント情報</button>
-        <button mlButton>ログアウト</button>
+      <ng-template [ngSwitchCase]="false">
+        <a mlButton routerLink="/sign-in" aria-label="ログインページへ">ログイン</a>
       </ng-template>
-
-      <button mlButton routerLink="/sign-up">アカウントの作成</button>
     </div>
   </section>
 </div>

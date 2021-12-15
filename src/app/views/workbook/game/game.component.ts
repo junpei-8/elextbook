@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,Inject, NgZone,
+  OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation
+} from '@angular/core';
+import { RootChangeDetector } from 'src/app/root-change-detector';
 import { RootHeader } from 'src/app/root-header.service';
 import { RootView } from 'src/app/root-view.service';
 import { Fragment } from 'src/app/services/fragment.service';
@@ -23,6 +28,9 @@ export class WorkbookGameComponent implements OnInit, OnDestroy {
 
   descHasExpanded: boolean;
 
+  question: string;
+  answers: string[] = [];
+
   private _unobserveFragment: () => void;
 
   constructor(
@@ -30,15 +38,16 @@ export class WorkbookGameComponent implements OnInit, OnDestroy {
     public fragment: Fragment,
     private _rootView: RootView,
     private _rootHeader: RootHeader,
-    private _changeDetection: ChangeDetectorRef
+    private _changeDetection: ChangeDetectorRef,
+    @Inject(DOCUMENT) _document: Document
   ) {
     fragment.remove('playing');
 
     _rootHeader.setup({
       theme: 'primary',
-      onClickMobileActions: () => fragment.add('playing'),
-      rightActionsIcon: 'starOutline',
-      leftActionsIcon: 'download',
+      onClickMobileAction: () => fragment.add('playing'),
+      rightActionIcon: 'starOutline',
+      leftActionIcon: 'download',
       willChange: true
     });
 
@@ -47,6 +56,11 @@ export class WorkbookGameComponent implements OnInit, OnDestroy {
       onMatch: this._play.bind(this),
       onMismatch: this._rest.bind(this)
     });
+
+    setTimeout(() => {
+      _rootView.loadedRoute['workbook-game'] = true;
+      RootChangeDetector.ref.markForCheck();
+    }, 2000);
   }
 
   ngOnInit(): void {
@@ -54,20 +68,31 @@ export class WorkbookGameComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._unobserveFragment();
+    this._rootView.loadedRoute['workbook-game'] = false;
   }
 
   private _play(): void {
     console.log('playing');
 
     const header = this._rootHeader;
-    header.onClickLeftActions = () => this.fragment.remove();
-    header.setActionsIcon('left', 'back');
-    header.setActionsIcon('right', 'more');
+    header.onClickLeftAction = () => this.fragment.remove();
+    header.setActionIcon('left', 'back');
+    header.setActionIcon('right', 'more');
     header.setMode('wg-toolbar');
     header.setTheme();
     header.updateClass();
 
     this._rootView.mobileNavHasHidden = true;
+
+    this.question = '<p class="wgt-p">question</p>';
+
+    this.answers = [
+      '<p class="wgt-p">あああああああああああああああああああああああああああああああああああ</p>',
+      '<p class="wgt-p">あああああああああああああああああああああああああああああああああああ</p>',
+      '<p class="wgt-p">あああああああああああああああああああああああああああああああああああ</p>',
+      '<p class="wgt-p">あああああああああああああああああああああああああああああああああああ</p>',
+      '<p class="wgt-p">あああああああああああああああああああああああああああああああああああ</p>',
+    ];
 
     this.isPlaying = true;
     this._changeDetection.markForCheck();
@@ -77,8 +102,8 @@ export class WorkbookGameComponent implements OnInit, OnDestroy {
     console.log('resting');
 
     const header = this._rootHeader;
-    header.setActionsIcon('left', 'download');
-    header.setActionsIcon('right', 'starOutline');
+    header.setActionIcon('left', 'download');
+    header.setActionIcon('right', 'starOutline');
     header.setMode();
     header.setTheme('accent');
     header.updateClass();
@@ -93,5 +118,8 @@ export class WorkbookGameComponent implements OnInit, OnDestroy {
   private _pause(): void {
     // 確認ダイアログを出現させる
     // 確認した後は _rest() を呼び出す
+  }
+
+  selectAnswer(index: number): void {
   }
 }

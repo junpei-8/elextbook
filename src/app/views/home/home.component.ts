@@ -16,11 +16,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     changeDetectorRef: ChangeDetectorRef,
     public fragment: Fragment,
     public pwa: PWA,
-    private _ngZone: NgZone,
   ) {
     rootHeader.setup();
 
-    pwa.addA2HSEventListener(() => changeDetectorRef.markForCheck());
+    pwa.addA2hsEventListener(() => changeDetectorRef.markForCheck());
   }
 
   ngOnInit(): void {

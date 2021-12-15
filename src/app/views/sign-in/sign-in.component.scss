@@ -1,0 +1,11 @@
+.si {
+  &-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &-session-label {
+    margin: 0 auto 0;
+    padding-left: 8px;
+  }
+}

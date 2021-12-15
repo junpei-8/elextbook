@@ -1,12 +1,12 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, NgZone, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ComponentFactoryResolver, ElementRef, Inject, Injector, NgZone, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MediaQuery } from './services/media-query.service';
 
-import { RootRouteNames, RouteData } from './app-routing.module';
+import { RootRouteKeys, RootRouteNames, RouteData } from './app-routing.module';
 import { RouteChanges, ROUTE_CHANGES } from './services/route-changes.service';
 import { YoungestRoute, YOUNGEST_ROUTE } from './services/youngest-route.service';
 import { Meta } from './services/meta.service';
 import { FIREBASE, Firebase } from './services/firebase';
-import { animate, query, sequence, style, transition, trigger } from '@angular/animations';
+import { animate, animateChild, query, sequence, style, transition, trigger } from '@angular/animations';
 import { RootDrawer } from './root-drawer.service';
 import { RootChangeDetector } from './root-change-detector';
 import { RootHeader } from './root-header.service';
@@ -31,15 +31,18 @@ import { RootView } from './root-view.service';
 
           query(':leave', [
             style({ opacity: 1, willChange: 'all' }),
-            animate('120ms cubic-bezier(0.56, 0, 0.56, 0.2)', style({ opacity: 0 })),
+            animate('120ms cubic-bezier(0, 0, 0.2, 1)', style({ opacity: 0 })) // 減速
+            // animate('120ms cubic-bezier(0.4, 0, 1, 1)', style({ opacity: 0 })) // 加速
           ], { optional: true }),
 
-          query(':leave', animate('8ms', style({ position: 'absolute' })), { optional: true }),
+          query(':leave', animate('16ms', style({ position: 'absolute' })), { optional: true }),
 
           query(':enter', [
             style({ position: 'relative' }),
-            animate('120ms cubic-bezier(0.24, 0.8, 0.24, 1)', style({ opacity: 1 }))
-          ], { optional: true })
+            animate('120ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 1 })) // 標準
+          ], { optional: true }),
+
+          animateChild(),
         ])
       )
     ])
@@ -67,7 +70,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     navTrackerOrientation: 'vertical' | 'horizontal';
   } = {} as any;
 
-  selectedRouteKey: string;
+  selectedRouteKey: RootRouteKeys;
 
   selectedRoute: { [route in RootRouteNames]?: 'primary' } = {};
   selectedRouteIndex: number | undefined;
@@ -85,9 +88,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     mediaQuery: MediaQuery,
     meta: Meta,
     ngZone: NgZone,
+    public rootView: RootView,
     public rootDrawer: RootDrawer,
     public rootHeader: RootHeader,
-    public rootView: RootView,
     // private _firebase: Firebase,
     @Inject(FIREBASE) private _firebase: Firebase,
     @Inject(ROUTE_CHANGES) routeChanges: RouteChanges,
@@ -101,10 +104,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       const data = youngestRoute.ref.snapshot.data as RouteData;
 
+      const rootData = data.root;
       meta.update(data);
       this.selectedRouteKey = data.key;
 
-      const rootData = data.root;
       if (rootData) {
         this.selectedRouteIndex = rootData.index;
         this.selectedRoute = {
@@ -151,11 +154,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     // Import google analytics
     this._firebase.analytics;
-  }
-
-  toggleDarkTheme(): void {
-    this._document.body.classList.toggle('dark-theme');
-    const x = document.createElement('path');
   }
 
   routeNavigation(event: Event, path: string): void {

@@ -15,40 +15,23 @@
 <!-- Content -->
 <ng-template [ngIf]="isPlaying" [ngIfElse]="resting">
   <div class="wg-playing">
-    <section class="wg-question wg-typography"></section>
-
-    <section class="wg-answer-wrapper">
-      <div class="wg-answer wg-typography" mlRipple role="button">
-        <div class="wg-answer-overlay"></div>
-      </div>
-      <div class="wg-answer wg-typography" mlRipple role="button">
-        <div class="wg-answer-overlay"></div>
-      </div>
-      <div class="wg-answer wg-typography" mlRipple role="button">
-        <div class="wg-answer-overlay"></div>
-      </div>
-      <div class="wg-answer wg-typography" mlRipple role="button">
-        <div class="wg-answer-overlay"></div>
-      </div>
-      <div class="wg-answer" mlRipple role="button" aria-label="回答5">
-        <div class="wg-answer-overlay"></div>
-      </div>
-    </section>
+    <section class="wg-question" [questionRenderer]="question"></section>
+    <section class="wg-answer-wrapper" [answersRenderer]="answers" [onClickAnswer]="selectAnswer.bind(this)"></section>
   </div>
 </ng-template>
 
 <ng-template #resting>
   <div class="wg-resting eb-limit eb-view-spacer">
     <section class="wg-desc wg-card eb-card" [class.expanded]="descHasExpanded">
-      <h2 class="wg-desc-title wg-actions" mlButton role="button" aria-label="詳細を見る" hoverAction="enabled">TITLE</h2>
+      <h2 class="wg-desc-title wg-action" mlButton role="button" aria-label="詳細を見る" hoverAction="enabled">TITLE</h2>
       <!-- <div class="wg-"></div> -->
     </section>
     
     <ng-template [ngIf]="isResults">
       <section class="wg-card eb-card eb-zero-padding">
-        <button class="wg-actions" mlButton theme="secondary" (click)="fragment.add('playing')" aria-label="途中から開始する">途中から開始する</button>
-        <button class="wg-actions" mlButton theme="warn" (click)="fragment.add('playing')" aria-label="ミスした問題飲み出題">ミスした問題のみ出題</button>
-        <button class="wg-actions" mlButton theme="primary" (click)="configSection.scrollIntoView({ behavior: 'smooth', block: 'center' })" aria-label="設定を変更する">設定を変更する</button>
+        <button class="wg-action" mlButton theme="secondary" (click)="fragment.add('playing')" aria-label="途中から開始する">途中から開始する</button>
+        <button class="wg-action" mlButton theme="warn" (click)="fragment.add('playing')" aria-label="ミスした問題飲み出題">ミスした問題のみ出題</button>
+        <button class="wg-action" mlButton theme="primary" (click)="configSection.scrollIntoView({ behavior: 'smooth', block: 'center' })" aria-label="設定を変更する">設定を変更する</button>
       </section>
   
       <section class="wg-results wg-card eb-card">
@@ -76,10 +59,12 @@
       </section>
     </ng-template>
 
-    <section #configSection class="wg-card eb-card eb-settings">
-      <div class="eb-settings-section">
-        <span class="eb-settings-label">ゲーム設定</span>
-        <!-- <div class="eb-settings-form">aiueo</div> -->
+    <section #configSection class="wg-card eb-card eb-flex eb-zero-padding">
+      <div class="eb-settings">
+        <div class="eb-settings-section">
+          <span class="eb-settings-label">ゲーム設定</span>
+          <!-- <div class="eb-settings-form">aiueo</div> -->
+        </div>
       </div>
     </section>
   </div>

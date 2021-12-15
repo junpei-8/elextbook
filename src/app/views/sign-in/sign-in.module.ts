@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 import { SignInRoutingModule } from './sign-in-routing.module';
 import { SignInComponent } from './sign-in.component';
+import { MlButtonModule } from '@material-lite/angular/button';
 
 
 @NgModule({
@@ -10,8 +10,8 @@ import { SignInComponent } from './sign-in.component';
     SignInComponent
   ],
   imports: [
-    CommonModule,
-    SignInRoutingModule
+    SignInRoutingModule,
+    MlButtonModule
   ]
 })
 export class SignInModule { }
