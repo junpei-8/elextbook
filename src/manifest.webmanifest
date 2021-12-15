@@ -46,7 +46,7 @@
       "description": "回答した７日間のデータを表したグラフを見て、頑張りを確かめましょう。",
       "url": "/graph",
       "icons": [{
-        "src": "assets/images/icons/graph-192x192.png",
+        "src": "assets/images/icons/graph-192x192.svg",
         "sizes": "192x192"
       }]
     },
@@ -56,7 +56,7 @@
       "description": "様々な問題を解き知識を確実にすることで資格を取得しましょう。",
       "url": "/workbook",
       "icons": [{
-        "src": "assets/images/icons/workbook-192x192.png",
+        "src": "assets/images/icons/workbook-192x192.svg",
         "sizes": "192x192"
       }]
     },
@@ -66,7 +66,7 @@
       "description": "勉強効率を上げる、様々な機能を活用し、資格を取得しましょう。",
       "url": "/library",
       "icons": [{
-        "src": "assets/images/icons/library-192x192.png",
+        "src": "assets/images/icons/library-192x192.svg",
         "sizes": "192x192"
       }]
     },
@@ -76,7 +76,7 @@
       "description": "設定を変更し、より効率の良い勉強ができるようにしましょう。",
       "url": "/settings",
       "icons": [{
-        "src": "assets/images/icons/settings-192x192.png",
+        "src": "assets/images/icons/settings-192x192.svg",
         "sizes": "192x192"
       }]
     }
