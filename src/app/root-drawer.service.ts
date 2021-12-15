@@ -15,8 +15,8 @@ export class RootDrawer {
 
   private _closeTimeout?: number;
 
-  private _prevHeaderLeftActionsEvent: () => void;
-  private _prevHeaderLeftActionsSVGKey: string | null;
+  private _prevHeaderLeftAction: () => void;
+  private _prevHeaderLeftActionSVGKey: string | null;
 
   constructor(
     private _ngZone: NgZone,

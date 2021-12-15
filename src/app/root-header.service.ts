@@ -13,11 +13,11 @@ interface SetupConfig {
   content?: MlPortalContent | null;
   mode?: string | null;
   theme?: string | null;
-  leftActionsIcon?: SVGIconPathKeys;
-  rightActionsIcon?: SVGIconPathKeys;
-  onClickLeftActions?: () => void;
-  onClickRightActions?: () => void;
-  onClickMobileActions?: () => void;
+  leftActionIcon?: SVGIconPathKeys;
+  rightActionIcon?: SVGIconPathKeys;
+  onClickLeftAction?: () => void;
+  onClickRightAction?: () => void;
+  onClickMobileAction?: () => void;
   willChange?: boolean;
 }
 
@@ -31,7 +31,7 @@ const SVG_ICON_PATH = {
   clear: 'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z',
   drawer: 'M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z',
   people: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM7.07 18.28c.43-.9 3.05-1.78 4.93-1.78s4.51.88 4.93 1.78C15.57 19.36 13.86 20 12 20s-3.57-.64-4.93-1.72zm11.29-1.45c-1.43-1.74-4.9-2.33-6.36-2.33s-4.93.59-6.36 2.33C4.62 15.49 4 13.82 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8c0 1.82-.62 3.49-1.64 4.83zM12 6c-1.94 0-3.5 1.56-3.5 3.5S10.06 13 12 13s3.5-1.56 3.5-3.5S13.94 6 12 6zm0 5c-.83 0-1.5-.67-1.5-1.5S11.17 8 12 8s1.5.67 1.5 1.5S12.83 11 12 11z',
-  download: 'M18,15v3H6v-3H4v3c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2v-3H18z M7,9l1.41,1.41L11,7.83V16h2V7.83l2.59,2.58L17,9l-5-5L7,9z',
+  download: 'M18,15v3H6v-3H4v3c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2v-3H18z M17,11l-1.41-1.41L13,12.17V4h-2v8.17L8.41,9.59L7,11l5,5 L17,11z',
   starOutline: 'M22 9.24l-7.19-.62L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.63-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.71 4.04 4.38.38-3.32 2.88 1 4.28L12 15.4z',
 };
 
@@ -43,11 +43,11 @@ type SVGIconPathKeys = keyof typeof SVG_ICON_PATH;
 export class RootHeader {
   element: HTMLElement;
 
-  leftActionsSVGElement: HTMLElement;
-  leftActionsSVGKey: SVGIconPathKeys | null;
+  leftActionSVGElement: HTMLElement;
+  leftActionSVGKey: SVGIconPathKeys | null;
 
-  rightActionsSVGElement: HTMLElement;
-  rightActionsSVGKey: SVGIconPathKeys | null;
+  rightActionSVGElement: HTMLElement;
+  rightActionSVGKey: SVGIconPathKeys | null;
 
   readonly content: MlPortalContent;
   defaultContent: MlPortalContent;
@@ -55,9 +55,9 @@ export class RootHeader {
   classes: Classes = [null, null, null];
   private _classLength = /* this._classes.length */ 3;
 
-  onClickLeftActions: () => void;
-  onClickRightActions: () => void;
-  onClickMobileActions: () => void;
+  onClickLeftAction: () => void;
+  onClickRightAction: () => void;
+  onClickMobileAction: () => void;
 
   noop = noop;
 
@@ -69,8 +69,8 @@ export class RootHeader {
 
   updateContents(): void {
     this.element = this._document.getElementById('rh')!;
-    this.leftActionsSVGElement = this._document.getElementById('rh-left-actions-svg')!;
-    this.rightActionsSVGElement = this._document.getElementById('rh-right-actions-svg')!;
+    this.leftActionSVGElement = this._document.getElementById('rh-left-action-svg')!;
+    this.rightActionSVGElement = this._document.getElementById('rh-right-action-svg')!;
   }
 
   setup(config: SetupConfig = {}): void {
@@ -83,12 +83,12 @@ export class RootHeader {
       willChange ? 'will-change' : null
     ];
 
-    this.onClickLeftActions = config.onClickLeftActions || (() => this._fragment.add('drawer'));
-    this.onClickRightActions = config.onClickRightActions || noop;
-    this.onClickMobileActions = config.onClickMobileActions || noop;
+    this.onClickLeftAction = config.onClickLeftAction || (() => this._fragment.add('drawer'));
+    this.onClickRightAction = config.onClickRightAction || noop;
+    this.onClickMobileAction = config.onClickMobileAction || noop;
 
-    this.setActionsIcon('left', config.leftActionsIcon || 'drawer');
-    this.setActionsIcon('right', config.rightActionsIcon || 'people');
+    this.setActionIcon('left', config.leftActionIcon || 'drawer');
+    this.setActionIcon('right', config.rightActionIcon || 'people');
 
     this.setContent(config.content);
 
@@ -128,18 +128,18 @@ export class RootHeader {
     this.classes[2] = isEnable ? 'will-change' : null;
   }
 
-  setActionsIcon(direction: 'left' | 'right', key: SVGIconPathKeys | null, imagePath?: string): void {
+  setActionIcon(direction: 'left' | 'right', key: SVGIconPathKeys | null, imagePath?: string): void {
     let svgEl: HTMLElement;
 
     if (direction === 'left') {
-      svgEl = this.leftActionsSVGElement;
-      if (key === this.leftActionsSVGKey) { return; }
-      else { this.leftActionsSVGKey = key; };
+      svgEl = this.leftActionSVGElement;
+      if (key === this.leftActionSVGKey) { return; }
+      else { this.leftActionSVGKey = key; };
 
     } else {
-      svgEl = this.rightActionsSVGElement;
-      if (key === this.rightActionsSVGKey) { return; }
-      else { this.rightActionsSVGKey = key; };
+      svgEl = this.rightActionSVGElement;
+      if (key === this.rightActionSVGKey) { return; }
+      else { this.rightActionSVGKey = key; };
     }
 
     let enterPathEl: SVGImageElement | SVGPathElement;
@@ -154,7 +154,8 @@ export class RootHeader {
     }
 
     const leavePathEl = svgEl.lastChild as HTMLElement;
-    if (leavePathEl) leavePathEl.classList.value = 'rh-' + direction + '-icon-path';
+    if (leavePathEl)
+      leavePathEl.classList.value = 'rh-' + direction + '-icon-path';
 
     const enterPathClassList = enterPathEl.classList;
     enterPathClassList.add('rh-' + direction + '-icon-path');
