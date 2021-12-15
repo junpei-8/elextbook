@@ -26,23 +26,14 @@ export class PWA {
     this.hasSupported = isEnabled || !!windowRef.ServiceWorker;
 
     if (this.a2hsHasSupported = (windowRef.onbeforeinstallprompt === null)) {
-      const callback = (event: any) => {
-        this.a2hsEvent = event;
-        windowRef.removeEventListener('beforeinstallprompt', callback);
-      };
-
-      windowRef.addEventListener('beforeinstallprompt', callback);
+      windowRef.addEventListener('beforeinstallprompt',
+        (event: any) => this.a2hsEvent = event, { once: true });
     }
   }
 
-  addA2HSEventListener(callback: (event: A2hsEvent) => any): void {
+  addA2hsEventListener(callback: (event: A2hsEvent) => any): void {
     if (this.a2hsHasSupported && !this.a2hsEvent) {
-      const newCallback = (event: any) => {
-        callback(event);
-        window.removeEventListener('beforeinstallprompt', newCallback);
-      }
-
-      window.addEventListener('beforeinstallprompt', newCallback);
+      window.addEventListener('beforeinstallprompt', callback as any, { once: true });
     }
   }
 }
