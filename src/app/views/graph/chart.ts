@@ -26,7 +26,9 @@ export const CHART_CONFIG: ChartConfig = {
             type: 'color',
             duration: 160,
           }
-        }
+        },
+
+        animation: false
       }
     ]
   },
@@ -47,52 +49,3 @@ export const CHART_CONFIG: ChartConfig = {
     maintainAspectRatio: false
   }
 }
-
-
-// interface _IndexRef {
-//   selected?: number,
-//   hovered?: number
-// };
-// export function setChartTheme(chart: Chart | ChartConfig, themeType: ChartThemeType, indexRef?: _IndexRef): void {
-//   const theme = themeType === 'light'
-//     ? CHART_LIGHT_THEME
-//     : CHART_DARK_THEME;
-
-//   const dataset = chart.data.datasets[0] as ChartDataset;
-//   dataset.borderColor = theme.line;
-
-//   const scale = chart.options!.scales!; // @ts-ignore
-//   scale.y!.grid = scale.x!.grid = { color: theme.grid };
-  
-//   if (indexRef) {
-//     const pointColor = [];
-//     const gridColor = [];
-//     const gridLineWidth = [];
-  
-//     const labelLength = CHART_LABEL_LENGTH;
-//     for (let i = 0; i < labelLength; i++) {
-//       pointColor.push(theme.point);
-//       gridColor.push(theme.grid);
-//       gridLineWidth.push(theme.gridLineSize);
-//     }
-  
-//     const selectedIndex = indexRef.selected;
-//     const hoveredIndex = indexRef.hovered;
-
-//     if (selectedIndex || selectedIndex === 0) {
-//       pointColor[selectedIndex] = theme.selectedPoint;
-//     }
-  
-//     if (hoveredIndex || hoveredIndex === 0) {
-//       gridColor[hoveredIndex] = theme.hoveredGrid;
-//       gridLineWidth[hoveredIndex] = theme.hoveredGridLineSize;
-//     }
-
-//     dataset.pointBorderColor = dataset.pointBackgroundColor = pointColor;
-//      // @ts-ignore
-//     scale.x!.grid = {
-//       color: gridColor,
-//       lineWidth: gridLineWidth,
-//     };
-//   }
-// }
