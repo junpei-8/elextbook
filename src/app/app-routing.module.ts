@@ -4,7 +4,7 @@ import { MetaData } from './services/meta.service';
 import { HomeComponent } from './views/home/home.component';
 import { NotFoundComponent } from './views/not-found/not-found.component';
 
-export type RootRouteKeys = 'home' | 'graph' | 'workbook-game' | 'workbook-list' | 'library' | 'settings' | 'sign-in' | 'not-found';
+export type RootRouteKeys = 'home' | 'graph' | 'workbookQuiz' | 'workbookList' | 'library' | 'settings' | 'signIn' | 'notFound';
 export type RootRouteNames = 'home' | 'graph' | 'workbook' | 'library' | 'settings' | 'sign-in';
 
 export interface RouteData extends MetaData {
@@ -49,10 +49,10 @@ const routes: Routes = [
     }
   },
   {
-    path: 'workbook-game/:id',
-    loadChildren: () => import('./views/workbook/game/game.module').then(m => m.WorkbookGameModule),
-    data: {
-      key: 'workbook-game',
+    path: 'workbook-quiz/:id',
+    loadChildren: () => import('./views/workbook/quiz/quiz.module').then(m => m.WorkbookQuizModule),
+    data: { 
+      key: 'workbookQuiz',
       title: 'ワークブック',
       desc: 'Elextbook（エレクトブック）で、様々な問題を解き知識を確実にすることで資格を取得しましょう。',
       root: {
@@ -65,7 +65,7 @@ const routes: Routes = [
     path: 'workbook-list',
     loadChildren: () => import('./views/workbook/list/list.module').then(m => m.WorkbookListModule),
     data: {
-      key: 'workbook-list',
+      key: 'workbookList',
       title: 'ワークブック',
       desc: 'Elextbook（エレクトブック）で、取得したい資格に関する適切な問題を見つけ解くことで、資格を取得しましょう。',
       root: {
@@ -104,7 +104,7 @@ const routes: Routes = [
     path: 'sign-in',
     loadChildren: () => import('./views/sign-in/sign-in.module').then(m => m.SignInModule),
     data: {
-      key: 'sign-in',
+      key: 'signIn',
       title: 'サインイン',
       desc: 'Elextbook（エレクトブック）にサインインすることで、たくさんの便利な機能を利用できるようにし、効率よく勉強しましょう。',
     }
@@ -124,7 +124,7 @@ const routes: Routes = [
     path: '**',
     component: NotFoundComponent,
     data: {
-      key: 'not-found',
+      key: 'notFound',
       title: 'Not Found',
     }
   }
