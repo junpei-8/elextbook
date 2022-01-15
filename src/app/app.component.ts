@@ -1,18 +1,25 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ComponentFactoryResolver, ElementRef, Inject, Injector, NgZone, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MediaQuery } from './services/media-query.service';
+
+import {
+    animate, animateChild, query, sequence, style, transition, trigger
+} from '@angular/animations';
+import { DOCUMENT } from '@angular/common';
+import {
+    AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject,
+    NgZone, OnInit, TemplateRef, ViewChild, ViewEncapsulation
+} from '@angular/core';
+import { MlPortalConfig } from '@material-lite/angular-cdk/portal';
 
 import { RootRouteKeys, RootRouteNames, RouteData } from './app-routing.module';
-import { RouteChanges, ROUTE_CHANGES } from './services/route-changes.service';
-import { YoungestRoute, YOUNGEST_ROUTE } from './services/youngest-route.service';
-import { Meta } from './services/meta.service';
-import { FIREBASE, Firebase } from './services/firebase';
-import { animate, animateChild, query, sequence, style, transition, trigger } from '@angular/animations';
-import { RootDrawer } from './root-drawer.service';
+import { LOADED_ROUTE } from './loaded-route';
 import { RootChangeDetector } from './root-change-detector';
+import { RootDrawer } from './root-drawer.service';
 import { RootHeader } from './root-header.service';
-import { MlPortalConfig } from '@material-lite/angular-cdk/portal';
-import { DOCUMENT } from '@angular/common';
-import { RootView } from './root-view.service';
+import { ROOT_VIEW } from './root-view';
+import { FIREBASE, Firebase } from './services/firebase';
+import { MediaQuery } from './services/media-query.service';
+import { Meta } from './services/meta.service';
+import { ROUTE_CHANGES, RouteChanges } from './services/route-changes.service';
+import { YOUNGEST_ROUTE, YoungestRoute } from './services/youngest-route.service';
 
 @Component({
   selector: 'eb-root',
@@ -49,6 +56,9 @@ import { RootView } from './root-view.service';
   ]
 })
 export class AppComponent implements OnInit, AfterViewInit {
+  title = 'Elextbook';
+
+
   @ViewChild('rhDefaultContent', { static: true })
   set onSetRootHeaderDefaultContent(ref: TemplateRef<HTMLElement>) {
     this.rootHeader.defaultContent = ref;
@@ -59,9 +69,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.rootDrawer.elementRef = ref;
   }
 
-  title = 'Elextbook';
 
-  private _doCheckCount = 0;
+  selectedRouteKey: RootRouteKeys;
+
+  selectedRoute: { [route in RootRouteNames]?: 'primary' } = {};
+  selectedRouteIndex: number | undefined;
+
+
+  loadedRoute = LOADED_ROUTE;
+  rootView = ROOT_VIEW;
+
 
   mediaQueryState: {
     isPC: boolean;
@@ -70,10 +87,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     navTrackerOrientation: 'vertical' | 'horizontal';
   } = {} as any;
 
-  selectedRouteKey: RootRouteKeys;
-
-  selectedRoute: { [route in RootRouteNames]?: 'primary' } = {};
-  selectedRouteIndex: number | undefined;
 
   headerPortalConfig: MlPortalConfig = {
     animation: {
@@ -83,12 +96,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   };
 
+
+  private _doCheckCount = 0;
+
+
   constructor(
     changeDetector: ChangeDetectorRef,
     mediaQuery: MediaQuery,
     meta: Meta,
     ngZone: NgZone,
-    public rootView: RootView,
     public rootDrawer: RootDrawer,
     public rootHeader: RootHeader,
     // private _firebase: Firebase,
@@ -142,19 +158,23 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
 
+
   ngOnInit(): void {
     this.rootHeader.updateContents();
   }
+
 
   ngDoCheck(): void {
     this._doCheckCount++;
     console.log('Do Check', this._doCheckCount);
   }
 
+
   ngAfterViewInit(): void {
     // Import google analytics
     this._firebase.analytics;
   }
+
 
   routeNavigation(event: Event, path: string): void {
   }
