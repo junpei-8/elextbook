@@ -20,14 +20,4 @@
     <loc>https://elextbook.web.app/library</loc>
     <priority>0.5</priority>
   </url>
-
-  <url>
-    <loc>https://elextbook.web.app/sign-in</loc>
-    <priority>0.5</priority>
-  </url>
-
-  <url>
-    <loc>https://elextbook.web.app/sign-up</loc>
-    <priority>0.5</priority>
-  </url>
 </urlset>
