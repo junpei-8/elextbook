@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "elextbook-test",
+    "site": "elextbook",
     "public": "dist",
     "ignore": [
       "firebase.json",
