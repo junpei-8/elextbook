@@ -22,11 +22,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
     pwa.addA2hsEventListener(() => changeDetectorRef.markForCheck());
   }
 
+
   ngOnInit(): void {
   }
 
+
   ngAfterViewInit(): void {
   }
+
 
   onLoadImage(event: Event): void {
     (event.target as Element).classList.add('loaded');

@@ -8,10 +8,10 @@ import { ChartTheme, CHART_CONFIG, ChartDataset } from './chart';
 import { Chart, GridLineOptions } from 'chart.js';
 import './chart-register';
 import { _DeepPartialObject } from 'chart.js/types/utils';
-import { RootView } from 'src/app/root-view.service';
 import { Subscription } from 'rxjs';
 import { Firebase, FIREBASE } from 'src/app/services/firebase';
 import { DataSnapshot, onValue, ref } from '@firebase/database';
+import { LOADED_ROUTE } from 'src/app/loaded-route';
 
 interface UserDataType {
   workbookCounter: {
@@ -93,7 +93,7 @@ export class GraphComponent implements OnDestroy {
     this._ngZone.runOutsideAngular(() => {
       const config = CHART_CONFIG;
       const configOptions = config.options!;
-
+      
       config.data.labels = this._chartDateList.map(date => createDisplayDate(date));
       configOptions.onClick = this._onClickChart.bind(this);
       configOptions.onHover = this._onHoverChart.bind(this);
@@ -103,6 +103,7 @@ export class GraphComponent implements OnDestroy {
       (canvasEl as HTMLElement).addEventListener('mouseenter', () => this.hoveredChartXGridIndex = null);
 
       const chart = this._chart = new Chart(canvasEl, config);
+
       this._chartDataset = chart.data.datasets[0];
 
       this._updateChartTheme();
@@ -111,6 +112,7 @@ export class GraphComponent implements OnDestroy {
       this._unsubscribeChartData = onValue(dbRef, (snapshot) => this._onGetCounter(snapshot));
     })
   }
+
   private _chart: Chart;
   private _chartTheme: ChartTheme = {} as any;
   private _chartData: ChartData;
@@ -121,22 +123,25 @@ export class GraphComponent implements OnDestroy {
 
   private _chartDateList = createDateList(); // [1201, 1202, 1203...]
 
-  private _unsubscribeChartData: (() => void) | undefined;
-
-  selectedChartPointData: ChartPointData | null;
-  hoveredChartXGridIndex: number | null = null;
 
   selectedChart: {
     [key in ChartKey]?: true
   } = {};
 
-  hasSignedIn: boolean;
+  selectedChartPointData: ChartPointData | null;
+  hoveredChartXGridIndex: number | null = null;
+
+
   private _userChangesSubscription: Subscription;
+
+  private _unsubscribeChartData: (() => void) | undefined;
+
+
+  hasSignedIn: boolean;
 
   constructor(
     rootHeader: RootHeader,
     private _user: User,
-    private _rootView: RootView,
     private _ngZone: NgZone,
     private _changeDetector: ChangeDetectorRef,
     @Inject(DOCUMENT) private _document: Document,
@@ -145,7 +150,7 @@ export class GraphComponent implements OnDestroy {
     this._userChangesSubscription = _user.changes
       .subscribe((state) => {
         this.hasSignedIn = !!state;
-        this._rootView.loadedRoute.graph = !state;
+        LOADED_ROUTE.graph = !state;
 
         _changeDetector.markForCheck();
       })
@@ -153,11 +158,13 @@ export class GraphComponent implements OnDestroy {
     rootHeader.setup();
   }
 
+
   ngOnDestroy(): void {
-    this._rootView.loadedRoute.graph = false;
+    LOADED_ROUTE.graph = false;
     this._userChangesSubscription.unsubscribe();
     this._unsubscribeChartData?.();
   }
+
 
   private _createChartData(counters: UserDataType['workbookCounter'], categories?: string[]): ChartData {
     const chartData: ChartData = {};
@@ -202,21 +209,27 @@ export class GraphComponent implements OnDestroy {
       [key]: true
     };
 
-    this._chartDataset.data = this._chartDateList.map(date => this._chartData[date][key]);
+    const dataset = this._chartDataset;
+    dataset.animation = void 0;
+    dataset.data = this._chartDateList.map(date => this._chartData[date][key]);
 
     this._clearChartColor();
     this.selectedChartPointData = null;
     this.hoveredChartXGridIndex = null;
 
     this._ngZone.runOutsideAngular(() => this._chart.update('normal'));
+
+    dataset.animation = false;
   }
 
+
   private _onGetCounter(snapshot: DataSnapshot) {
-    this._rootView.loadedRoute.graph = true;
+    LOADED_ROUTE.graph = true;
     this._chartData = this._createChartData(snapshot.val() || USER_DATA.workbookCounter);
-    this.selectChart('percentage'); // <= chart.update() は呼び出される
+    this.selectChart('percentage'); // <= chart.update() はここで呼び出される
     this._ngZone.run(() => this._changeDetector.markForCheck());
   }
+
 
   private _onClickChart(event: any) {
     const chart = this._chart;
@@ -247,6 +260,7 @@ export class GraphComponent implements OnDestroy {
     }
   }
 
+
   private _onHoverChart(event: any) {
     const chart = this._chart;
     const element = chart.getElementsAtEventForMode(event, 'index', { axis: 'x' }, true)[0];
@@ -263,10 +277,12 @@ export class GraphComponent implements OnDestroy {
     }
   }
 
+
   private _onMouseoutChart() {
     this._highlightChartGrid(null);
     this._chart.update();
   }
+
 
   private _updateChartTheme(): void {
     const styleRef = getComputedStyle(this._document.body);
@@ -286,6 +302,7 @@ export class GraphComponent implements OnDestroy {
     this._chartDataset.borderColor = theme.line;
   }
 
+
   private _highlightChartPoint(index: number): void {
     const theme = this._chartTheme;
     
@@ -297,6 +314,7 @@ export class GraphComponent implements OnDestroy {
     const dataset = this._chartDataset;
     dataset.pointBorderColor = dataset.pointBackgroundColor = colors;
   }
+
 
   private _highlightChartGrid(index: number | null): void {
     const theme = this._chartTheme;
@@ -320,6 +338,7 @@ export class GraphComponent implements OnDestroy {
     this._chartScales.x.grid = { color, lineWidth };
   }
 
+
   private _clearChartColor(): void {
     const theme = this._chartTheme;
 
@@ -331,6 +350,7 @@ export class GraphComponent implements OnDestroy {
     }
   }
 }
+
 
 function createDateList(): number[] {
   const date = new Date();

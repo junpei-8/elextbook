@@ -1,11 +1,14 @@
-import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, NgZone, OnInit, ViewEncapsulation } from '@angular/core';
+import { Location } from '@angular/common';
 import { GoogleAuthProvider, OAuthProvider, signInWithPopup, TwitterAuthProvider, UserCredential } from '@firebase/auth';
-import { get, ref, update } from '@firebase/database';
-import { RootChangeDetector } from 'src/app/root-change-detector';
-import { RootHeader } from 'src/app/root-header.service';
-import { RootView } from 'src/app/root-view.service';
+
 import { Firebase, FIREBASE } from 'src/app/services/firebase';
+import { RootHeader } from 'src/app/root-header.service';
+import { RootChangeDetector } from 'src/app/root-change-detector';
+import { LOADED_ROUTE } from 'src/app/loaded-route';
+
+import { get, ref, update } from '@firebase/database';
+
 
 @Component({
   selector: 'eb-sign-in',
@@ -19,18 +22,19 @@ export class SignInComponent implements OnInit {
 
   constructor(
     rootHeader: RootHeader,
-    private _rootView: RootView,
     private _location: Location,
     private _ngZone: NgZone,
     private _changeDetector: ChangeDetectorRef,
     @Inject(FIREBASE) private _firebase: Firebase
   ) {
-    _rootView.loadedRoute['sign-in'] = true;
+    LOADED_ROUTE.signIn = true;
     rootHeader.setup();
   }
 
+
   ngOnInit(): void {
   }
+
 
   signIn(type: 'google' | 'twitter' | 'apple'): void {
     this._ngZone.runOutsideAngular(() => {
@@ -42,7 +46,7 @@ export class SignInComponent implements OnInit {
           ? new GoogleAuthProvider()
           : new TwitterAuthProvider()
   
-      this._rootView.loadedRoute['sign-in'] = false;
+      LOADED_ROUTE.signIn = false;
       RootChangeDetector.ref.markForCheck();
   
       signInWithPopup(auth, provider)
@@ -53,7 +57,7 @@ export class SignInComponent implements OnInit {
 
   private _onSignIn(result: UserCredential | null): void {
     if (result === null) {
-      this._rootView.loadedRoute['sign-in'] = true;
+      LOADED_ROUTE.signIn = true;
       this._ngZone.run(() => this._changeDetector.markForCheck());
 
     } else {
@@ -78,7 +82,7 @@ export class SignInComponent implements OnInit {
   }
 
   private _onFinalizeSignIn(): void {
-    this._rootView.loadedRoute['sign-in'] = true;
+    LOADED_ROUTE.signIn = true;
     this._location.back();
   }
 }
