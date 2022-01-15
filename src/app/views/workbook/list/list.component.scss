@@ -101,6 +101,7 @@
 
 
 .wl-rh {
+  position: relative;
   width: 100%;
   height: 100%;
 }
@@ -159,6 +160,8 @@
     padding: 0 8px;
     box-sizing: border-box;
     cursor: pointer;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   &-link {
@@ -192,20 +195,18 @@
   }
 }
 
-@include mp {
-  #rh.wl-search {
-    transform: translateY(0);
-    width: 100%;
-    height: 100%;
-  
-    .rh-content {
-      z-index: 2;
-    }
+#rh.wl-search {
+  transform: translateY(0);
+  width: 100%;
+  height: 100%;
 
-    .rh-mobile-action {
-      opacity: 0;
-      transition: ml.transition(opacity, normal, standard);
-    }
+  .rh-content-wrapper {
+    z-index: 2;
+  }
+
+  .rh-mobile-action {
+    opacity: 0;
+    transition: ml.transition(opacity, fast, ease-in-out);
   }
 }
 
@@ -240,11 +241,18 @@
     }
   }
 
+  .wl-rh {
+    width: 56%;
+    margin: 0 auto;
+  }
+
+  $input-height: 32px;
+
   .wl-rh-search {
     &-input {
       max-width: 800px;
-      width: 50%;
-      height: 32px;
+      width: 100%;
+      height: $input-height;
       padding: 0 16px;
       border-top-left-radius: 4px;
       border-bottom-left-radius: 4px;
@@ -258,7 +266,31 @@
     @include combine('.ml-button') {
       &-submitter {
         display: inline-flex;
+        height: $input-height;
       }
+    }
+  }
+
+  .wl-rh-suggest {
+    position: absolute;
+    top: (root.$header-pc-height - ((root.$header-pc-height - $input-height) * 0.5));
+    left: 0;
+
+    height: auto;
+
+    opacity: 0;
+    pointer-events: none;
+
+    @include ml.style((background-color), (background, app-bar));
+    @include ml.style((border: 2px solid [color]), (background, unselected-chip));
+    border-top: none;
+    box-sizing: border-box;
+
+    transition: opacity 120ms ml.transition-timing-function(ease-in-out);
+
+    &.focused {
+      opacity: 1;
+      pointer-events: auto;
     }
   }
 }

@@ -1,0 +1,71 @@
+<!-- Header -->
+<ng-template #rhContent>
+  <div class="wq-rh">
+    <ng-template [ngIf]="mediaQuery.isPC" [ngIfElse]="rhMobile">
+      <h2 class="wq-rh-pc-title wq-title">TITLE</h2>
+    </ng-template>
+    <ng-template #rhMobile>
+      <div class="wq-rh-mp-label">{{ isResults ? "Result" : "Play" }}</div>
+    </ng-template>
+  </div>
+</ng-template>
+
+
+
+<!-- Content -->
+<ng-template [ngIf]="isPlaying" [ngIfElse]="resting">
+  <div class="wq-playing">
+    <section class="wq-question" [questionRenderer]="question"></section>
+    <section class="wq-answer-wrapper" [answersRenderer]="answers" [onClickAnswer]="selectAnswer.bind(this)"></section>
+  </div>
+</ng-template>
+
+<ng-template #resting>
+  <div class="wq-resting eb-limit eb-view-spacer">
+    <section class="wq-desc wq-card eb-card" [class.expanded]="descHasExpanded">
+      <h2 class="wq-desc-title wq-action" mlButton role="button" aria-label="詳細を見る" hoverAction="enabled">TITLE</h2>
+      <!-- <div class="wq-"></div> -->
+    </section>
+    
+    <ng-template [ngIf]="isResults">
+      <section class="wq-card eb-card eb-zero-padding">
+        <button class="wq-action" mlButton theme="secondary" (click)="fragment.add('playing')" aria-label="途中から開始する">途中から開始する</button>
+        <button class="wq-action" mlButton theme="warn" (click)="fragment.add('playing')" aria-label="ミスした問題飲み出題">ミスした問題のみ出題</button>
+        <button class="wq-action" mlButton theme="primary" (click)="configSection.scrollIntoView({ behavior: 'smooth', block: 'center' })" aria-label="設定を変更する">設定を変更する</button>
+      </section>
+  
+      <section class="wq-results wq-card eb-card">
+        <table class="wq-results-table">
+          <tr>
+            <!-- <th colspan="2" class="wq-results-heading">{{ quiz.name }}</th> -->
+            <th class="wq-results-heading" colspan="2">通常問題</th>
+          </tr>
+          <tr>
+            <td class="wq-results-label ml-secondary-color">正解数</td>
+            <td>4 問</td>
+            <!-- <td>{{ counts.corrected }} 問</td> -->
+          </tr>
+          <tr>
+            <td class="wq-results-label ml-warn-color">ミス数</td>
+            <td>8 問</td>
+            <!-- <td>{{ counts.mistaken }} 問</td> -->
+          </tr>
+          <tr>
+            <td class="wq-results-label ml-accent-color">正答率</td>
+            <td>16 問</td>
+            <!-- <td>{{ counts.corrected / counts.answered | round }} ％</td> -->
+          </tr>
+        </table>
+      </section>
+    </ng-template>
+
+    <section #configSection class="wq-card eb-card eb-flex eb-zero-padding">
+      <div class="eb-settings">
+        <div class="eb-settings-section">
+          <span class="eb-settings-label">ゲーム設定</span>
+          <!-- <div class="eb-settings-form">aiueo</div> -->
+        </div>
+      </div>
+    </section>
+  </div>
+</ng-template>

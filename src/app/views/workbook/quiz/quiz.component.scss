@@ -1,0 +1,260 @@
+@use 'sass:color';
+@use 'src/app/theme' as ml;
+@use 'src/app/utils' as *;
+@use 'src/app/media-query' as *;
+
+$toolbar-height: 40px;
+
+// Common
+.wq {
+  &-title {
+    font-size: 20px;
+    font-weight: bold;
+  }
+}
+
+
+// Header
+.wq-rh {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+  &-pc {
+    &-title {
+      font-weight: 500;
+    }
+  }
+
+  &-mp {
+    &-label {
+      width: 100%;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+    }
+  }
+}
+
+
+// resting
+.wq {
+  &-card {
+    margin-bottom: 32px;
+    padding: 8px;
+    overflow: hidden;
+  }
+
+  &-desc {
+    padding: 0;
+
+    // &.expended {
+    // }
+
+    &-title {
+      line-height: 1;
+      font-size: 20px;
+    }
+  }
+
+  &-results {
+    display: flex;
+    justify-content: space-evenly;
+
+    &-table {
+      border-collapse: collapse;
+      text-align: center;
+      width: 100%;
+      margin-bottom: 24px;
+      font-weight: 500;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    &-heading {
+      @include ml.style((border-bottom: 1px solid [color]), (foreground, divider));
+      padding-bottom: 16px;
+    }
+
+    &-label {
+      width: 50%;
+      padding: 16px 0;
+    }
+  }
+
+  @include combine('.ml-button') {
+    &-action {
+      width: 100%;
+      height: 48px;
+      border-radius: 0;
+    }
+  }
+}
+
+
+// playing
+.wq {
+  &-playing {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding-top: $toolbar-height;
+    box-sizing: border-box;
+  }
+
+  &-question {
+    height: auto;
+    min-height: 30%;
+    max-height: 50%;
+    flex-shrink: 1;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+
+  &-answer {
+    &-wrapper {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      height: auto;
+      min-height: 50%;
+      max-height: 70%;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+  
+    &-row {
+      display: flex;
+      flex-wrap: nowrap;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+    }
+
+    & {
+      display: flex;
+
+      flex-grow: 1;
+      min-width: 50%;
+      height: auto;
+  
+      box-sizing: border-box;
+  
+      @include ml.style((border-top: 2px solid [color]), (foreground, divider));
+      @include ml.style(background, (background, card));
+      &:nth-child(2n) {
+        @include ml.style((border-left: 2px solid [color]), (foreground, divider));
+      }
+    }
+
+    &:hover &-overlay { opacity: 0.06; }
+    &-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      opacity: 0;
+      pointer-events: none;
+      transition: ml.transition(opacity, fast, ease-out);
+      @include ml.style(background-color, (foreground, opposite-base));
+    }
+
+    &-content {
+      display: flex;
+      flex-direction: column;
+
+      // flexboxで中央寄せすると、scrollのpaddingバグ(Firefox等)が発生してしまうので、marginを用いた中央寄せを行う
+      max-height: 100%;
+      margin: auto;
+      overflow: auto;
+      pointer-events: auto;
+
+      padding: 8px;
+      box-sizing: border-box;
+    }
+  }
+}
+
+
+// Typography
+$p: 'wqt-p';
+
+$img: 'wqt-i';
+$text-img: 'wqt-ti';
+
+$table: 'wqt-t';
+$table-tr: 'wqt-tr';
+$table-td: 'wqt-td';
+
+.wq-typography {
+  :last-child {
+    margin-bottom: 0;
+  }
+}
+
+.#{$p} {
+  margin: 0 0 8px;
+}
+
+.wq-question-content {
+  .#{$p} {
+    text-indent: 7px; // 14 / 2
+  }
+}
+
+
+@include mp {
+  #rh.wq-toolbar {
+    transform: translate(0);
+    height: 40px;
+    width: 100%;
+    border-radius: 0;
+    @include ml.elevation(2);
+  
+    .rh-mobile-action {
+      opacity: 0;
+      transition: ml.transition(opacity, fast, ease-in-out);
+    }
+  }
+}
+
+
+@include pc {
+  .wq {
+    &-playing {
+      padding-top: 0;
+      flex-direction: row;
+    }
+
+    &-question, &-answer-wrapper {
+      width: 50%;
+      min-height: 100%;
+      max-height: 0;
+    }
+
+    &-answer-wrapper {
+      @include ml.style((border: 2px solid [color]), (foreground, divider));
+      border-top: none;
+      box-sizing: border-box;
+    }
+
+    &-answer {
+      padding: 16px;
+    }
+
+    &-question-content {
+      .#{$p} {
+        text-indent: 8px; // 16 / 2
+      }
+    }
+  }
+}
+
+// .object {
+//   background-color: black;
+//   width: 180px;
+//   height: 180px
+// }

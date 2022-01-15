@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { listen } from '@material-lite/angular-cdk/utils';
+import { LOADED_ROUTE } from 'src/app/loaded-route';
 import { RootHeader } from 'src/app/root-header.service';
-import { RootView } from 'src/app/root-view.service';
 import { Fragment } from 'src/app/services/fragment.service';
 import { MediaQuery } from 'src/app/services/media-query.service';
 import { WorkbookData } from '../types';
@@ -16,8 +18,25 @@ interface ExportedList extends List {
 type Suggest = SuggestContent[]; 
 interface SuggestContent {
   token: string;
-  type: 'history' | 'guess';
+  isHistory?: boolean;
 }
+
+const SUGGEST = [
+  {
+    token: '第２種電気工事士',
+    isHistory: true
+  },
+  {
+    token: '第２種電気工事士',
+  },
+  {
+    token: '第２種電気工事士',
+    isHistory: true
+  },
+  {
+    token: '第１種電気工事士',
+  }
+];
 
 @Component({
   selector: 'eb-workbook-list',
@@ -33,8 +52,56 @@ export class WorkbookListComponent implements OnDestroy {
     this._rootHeader.setContent(ref);
   } 
 
-  @ViewChild('searchInputRef')
-  searchInputRef: ElementRef<HTMLInputElement>;
+  private _searchInput: HTMLInputElement | null;
+  @ViewChild('rhSearchInputRef')
+  set onSetSearchInputRef(ref: ElementRef<HTMLInputElement>) {
+    let searchInput = this._searchInput;
+
+    if (ref && !searchInput) {
+      searchInput = this._searchInput = ref.nativeElement;
+      const fragment = this._fragment;
+
+      if (fragment.value !== 'search') {
+        this._updateHeaderStyleForDefault();
+      }
+  
+      this._mediaQuery.pcChanges.subscribe((isPC) => {
+        if (isPC) {
+          this._removeStyleHandler();
+          this._removeStyleHandler = this._observeInputFocus();
+
+          fragment.remove('search');
+          this._updateHeaderStyleForDefault();
+
+        } else {
+          this._removeStyleHandler = 
+            fragment.observe({
+              name: 'search',
+              onMatch: () => {
+                this._updateHeaderStyleForSearch();
+                this.renderSuggest();
+              },
+              onMismatch: () => {
+                this._updateHeaderStyleForDefault();
+                this.deleteSuggest();
+              }
+            });
+        }
+      });
+
+      this._activatedRoute.queryParams.subscribe((params: { query?: string }) => {
+        const query = params.query;
+  
+        if (query && searchInput) {
+          searchInput.value = query;
+        }
+      });
+    }
+  }
+
+
+  searchInputHasFocused: boolean;
+
 
   // @ts-expect-error
   lists: ExportedList[] = [
@@ -62,97 +129,113 @@ export class WorkbookListComponent implements OnDestroy {
     }
   ] as List[];
 
-  suggest: Suggest = [
-    {
-      token: '第２種電気工事士',
-      type: 'history',
-    },
-    {
-      token: '第２種電気工事士',
-      type: 'history',
-    },
-    {
-      token: '第２種電気工事士',
-      type: 'history',
-    },
-    {
-      token: '第１種電気工事士',
-      type: 'guess'
-    }
-  ];
 
-  private _unobserveFragment: () => void = this._rootHeader.noop;
+  // TODO: DBから取得する
+  suggest: Suggest;
+
+
+  private _deletingSuggestTimeoutId: number = 0;
+  private _removeStyleHandler: () => void = () => {};
+
 
   constructor(
-    rootView: RootView,
-    mediaQuery: MediaQuery,
+    private _router: Router,
     private _fragment: Fragment,
-    private _rootHeader: RootHeader
+    private _rootHeader: RootHeader,
+    private _mediaQuery: MediaQuery,
+    private _activatedRoute: ActivatedRoute,
+    private _changeDetector: ChangeDetectorRef
   ) {
-    rootView.loadedRoute['workbook-list'] = true;
+    LOADED_ROUTE.workbookList = true;
     _rootHeader.onClickMobileAction = () => _fragment.add('search');
     _rootHeader.classes = [null, null, 'will-change']; // updateClassは省略
-
-    if (_fragment.streamedValue !== 'search') {
-      this._updateHeaderStyleForDefault();
-    }
-
-    mediaQuery.pcChanges.subscribe((isPC) => {
-      if (isPC) {
-        _fragment.remove('search');
-        this._unobserveFragment();
-        this._unobserveFragment = _rootHeader.noop;
-
-      } else {
-        this._unobserveFragment = 
-        _fragment.observe({
-            name: 'search',
-            onMatch: this._updateHeaderStyleForSearch.bind(this),
-            onMismatch: this._updateHeaderStyleForDefault.bind(this)
-          });
-      }
-    });
   }
+
 
   ngOnDestroy(): void {
-    this._unobserveFragment();
+    // this._unobserveFragment?.();
+    this._removeStyleHandler();
   }
 
+
+  private _observeInputFocus(): () => void {
+    const searchInput = this._searchInput!;
+
+    const _listen = listen;
+
+    const removeFocusListener =
+      _listen(searchInput, 'focus', () => {
+        this.renderSuggest();
+        this.searchInputHasFocused = true;
+        this._changeDetector.markForCheck();
+      });
+
+    const removeBlurListener =
+      _listen(searchInput, 'blur', () => {
+        this.deleteSuggest();
+        this.searchInputHasFocused = false;
+        this._changeDetector.markForCheck();
+      });
+
+    return () => {
+      removeFocusListener();
+      removeBlurListener();
+    };
+  }
+
+
   private _updateHeaderStyleForSearch(): void {
+    this._searchInput?.focus();
+
     const header = this._rootHeader;
+
+    header.setMode('wl-search');
+
     header.setActionIcon('left', 'back');
     header.onClickLeftAction = () => this._fragment.remove();
 
     header.setActionIcon('right', 'clear');
-    header.onClickRightAction = () => this.searchInputRef.nativeElement.value = '';
+    header.onClickRightAction = () => this._searchInput!.value = '';
 
-    this.searchInputRef?.nativeElement.focus();
-
-    header.setMode('wl-search');
     header.updateClass();
   }
 
+
   private _updateHeaderStyleForDefault(): void {
+    this._searchInput?.blur();
+
     const header = this._rootHeader;
+
+    header.setMode();
+
     header.setActionIcon('left', 'drawer');
     header.onClickLeftAction = () => this._fragment.add('drawer');
 
     // 仮
     header.setActionIcon('right', 'people');
-    header.onClickRightAction = () => this.searchInputRef.nativeElement.value = '';
-
-    this.searchInputRef?.nativeElement.blur();
-
-    header.setMode();
+    header.onClickRightAction = () => this._searchInput!.value = '';
+  
     header.updateClass();
   }
 
+
   search(event: Event): void {
     event.preventDefault(); // <= Prevent reload events
+
+    const query = this._searchInput!.value;
+
+    const extras = query
+      ? { queryParams: { query } }
+      : void 0;
+
+    this._router.navigate([], extras);
   }
 
-  private _onInputSearchbar(): void {
+
+  onInputSearchbar(): void {
+    // const value = this._searchInput!.value;
   }
+
 
   trackCategory(i: number, list: List) {
     return list.category || i;
@@ -161,8 +244,33 @@ export class WorkbookListComponent implements OnDestroy {
     return data.id;
   }
 
-  rightSuggestActionEvent(type: 'history' | 'guess', event: Event): void {
-    if (type === 'guess') {
+
+  rightSuggestActionEvent(content: SuggestContent): false {
+    if (content.isHistory) {
+
+
+    } else {
+      this._searchInput!.value = content.token;
     }
+
+    return false;
+  }
+
+
+  renderSuggest(): void {
+    // TODO: DBから取得する
+    this.suggest = SUGGEST;
+  }
+
+
+  deleteSuggest(): void {
+    const duration = this._mediaQuery.isPC ? 120 : 240;
+
+    this._deletingSuggestTimeoutId =
+      setTimeout(() => {
+        clearTimeout(this._deletingSuggestTimeoutId);
+        this.suggest = [];
+        this._changeDetector.markForCheck();
+      }, duration) as any;
   }
 }
