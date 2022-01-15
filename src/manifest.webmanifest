@@ -18,8 +18,8 @@
       "sizes": "144x144"
     },
     {
-      "src": "assets/favicons/favicon-180x180.png",
-      "type": "image/png",
+      "src": "assets/favicons/favicon-180x180.jpg",
+      "type": "image/jpeg",
       "purpose": "maskable",
       "sizes": "180x180"
     },
