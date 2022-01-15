@@ -34,15 +34,16 @@ export class Fragment {
   }
 
   constructor(
-    _router: Router,
+    router: Router,
     private _route: ActivatedRoute,
     private _location: Location,
   ) {
-    this._navigate = _router.navigate.bind(_router);
+    this._navigate = router.navigate.bind(router);
 
     const obs = this.observable = _route.fragment;
     obs.subscribe(this._onChangeFragment.bind(this));
   }
+
 
   private _onChangeFragment(fragment: string | null): void {
     const prevFragment = this.streamedValue;
@@ -59,6 +60,7 @@ export class Fragment {
     // @ts-ignore
     this.streamedValue = fragment;
   }
+
 
   observe(partial: Partial): () => void {
     const name = partial.name;
@@ -84,9 +86,14 @@ export class Fragment {
     return unobserveFragment.bind(null, subscription, onMatch, onMismatch);
   }
 
+
   add(name: string): void {
-    this._navigate([], { fragment: name });
+    this._navigate([], {
+      fragment: name,
+      queryParams: this._route.snapshot.queryParams
+    });
   }
+
 
   remove(name?: string): void {
     const value = this.value;
@@ -97,12 +104,16 @@ export class Fragment {
     }
   }
 
+
   toggle(name: string): void {
     if (this.value) {
       this._location.back();
 
     } else {
-      this._navigate([], { fragment: name });
+      this._navigate([], {  
+        fragment: name,
+        queryParams: this._route.snapshot.queryParams
+      });
     }
   }
 }
