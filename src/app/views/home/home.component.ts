@@ -1,4 +1,12 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  NgZone,
+  OnInit,
+  ViewEncapsulation
+  } from '@angular/core';
 import { RootHeader } from 'src/app/root-header.service';
 import { Fragment } from 'src/app/services/fragment.service';
 import { PWA } from 'src/app/services/pwa.service';
@@ -31,7 +39,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
 
-  onLoadImage(event: Event): void {
-    (event.target as Element).classList.add('loaded');
-  }
+  // onLoadImage(event: Event): void {
+  //   (event.target as Element).classList.add('loaded');
+  // }
 }
