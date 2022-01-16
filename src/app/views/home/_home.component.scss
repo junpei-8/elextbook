@@ -20,7 +20,8 @@
   height: 100%;
   width: 100%;
 
-  color: white;
+  @include ml.style(background-color, (background, app-bar));
+  // color: white;
 
   display: flex;
   contain: paint; // 範囲外をレンダリングしない指定
@@ -29,21 +30,21 @@
     height: 40px;
   }
 
-  &-bg {
-    object-fit: cover;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    transition: ml.transition(filter, very-slow, acceleration);
-    filter: brightness(0);
-    background: black;
-    z-index: -1;
+  // &-bg {
+  //   object-fit: cover;
+  //   position: fixed;
+  //   width: 100%;
+  //   height: 100%;
+  //   pointer-events: none;
+  //   transition: ml.transition(filter, very-slow, acceleration);
+  //   filter: brightness(0);
+  //   background: black;
+  //   z-index: -1;
 
-    &.loaded {
-      filter: brightness(.32);
-    }
-  }
+  //   &.loaded {
+  //     filter: brightness(.32);
+  //   }
+  // }
   
   &-content {
     display: inline-block;
