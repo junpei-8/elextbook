@@ -1,14 +1,27 @@
-
 import {
-    animate, animateChild, query, sequence, style, transition, trigger
-} from '@angular/animations';
+  animate,
+  animateChild,
+  query,
+  sequence,
+  style,
+  transition,
+  trigger
+  } from '@angular/animations';
 import { DOCUMENT } from '@angular/common';
 import {
-    AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject,
-    NgZone, OnInit, TemplateRef, ViewChild, ViewEncapsulation
-} from '@angular/core';
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Inject,
+  NgZone,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  ViewEncapsulation
+  } from '@angular/core';
 import { MlPortalConfig } from '@material-lite/angular-cdk/portal';
-
 import { RootRouteKeys, RootRouteNames, RouteData } from './app-routing.module';
 import { LOADED_ROUTE } from './loaded-route';
 import { RootChangeDetector } from './root-change-detector';
@@ -19,7 +32,8 @@ import { FIREBASE, Firebase } from './services/firebase';
 import { MediaQuery } from './services/media-query.service';
 import { Meta } from './services/meta.service';
 import { ROUTE_CHANGES, RouteChanges } from './services/route-changes.service';
-import { YOUNGEST_ROUTE, YoungestRoute } from './services/youngest-route.service';
+
+
 
 @Component({
   selector: 'eb-root',
@@ -108,17 +122,17 @@ export class AppComponent implements OnInit, AfterViewInit {
     public rootDrawer: RootDrawer,
     public rootHeader: RootHeader,
     // private _firebase: Firebase,
+    @Inject(DOCUMENT) private _document: Document,
     @Inject(FIREBASE) private _firebase: Firebase,
-    @Inject(ROUTE_CHANGES) routeChanges: RouteChanges,
-    @Inject(YOUNGEST_ROUTE) youngestRoute: YoungestRoute,
-    @Inject(DOCUMENT) private _document: Document
+    @Inject(ROUTE_CHANGES) routeChanges: RouteChanges<RouteData>
   ) {
     RootChangeDetector.ref = changeDetector;
 
-    routeChanges.subscribe(() => {
+
+    routeChanges.subscribe((youngestRoute) => {
       ngZone.runOutsideAngular(() => setTimeout(() => window.scrollTo({ top: 0 }), 120));
 
-      const data = youngestRoute.ref.snapshot.data as RouteData;
+      const data = youngestRoute.snapshot.data;
 
       const rootData = data.root;
       meta.update(data);
@@ -135,6 +149,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.selectedRoute = {}
       }
     });
+
 
     mediaQuery.pcChanges.subscribe(isPC => {
       if (isPC) {
