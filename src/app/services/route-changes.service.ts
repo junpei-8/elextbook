@@ -1,5 +1,11 @@
-import { inject, InjectionToken } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { inject, InjectionToken, Type } from '@angular/core';
+import {
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+  Data,
+  NavigationEnd,
+  Router
+  } from '@angular/router';
 import { filter, Observable, Subject } from 'rxjs';
 
 // export const URL_CHANGES = new InjectionToken('It Can detects url changes', {
@@ -9,24 +15,41 @@ import { filter, Observable, Subject } from 'rxjs';
 //   )
 // });
 
+type _ActivatedRoute<D = Data> = ActivatedRoute & {
+  data: Observable<D>;
+  snapshot: ActivatedRouteSnapshot & {
+    data: D
+  };
+}
 
-export type RouteChanges = Observable<string>;
+type Component = Type<any> | string | null;
+
+export type RouteChanges<D = Data> = Observable<_ActivatedRoute<D>>;
 export const ROUTE_CHANGES = new InjectionToken('It Can detects route changes', {
   providedIn: 'root',
   factory: () => {
-    const subject = new Subject();
+    const subject = new Subject<ActivatedRoute>();
     const router = inject(Router);
-    let prevPath: undefined | string;
+
+    let prevLastComponent: Component;
 
     router.events
       .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event) => {
-        const prev = prevPath;
-        const curr = router.url.split(/[#?]/, 1)[0];
+      .subscribe(() => {
+        let lastComponent: Component;
 
-        if (prev !== curr) {
-          subject.next(event);
-          prevPath = curr;
+        let route = router.routerState.root;
+        let routeChild: any = route;
+
+        while ((routeChild = routeChild.firstChild)) {
+          route = routeChild;
+        }
+
+        lastComponent = route.component;
+
+        if (lastComponent !== prevLastComponent) {
+          subject.next(route);
+          prevLastComponent = lastComponent;
         }
       });
 
